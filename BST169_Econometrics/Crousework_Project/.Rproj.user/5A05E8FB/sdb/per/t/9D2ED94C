@@ -1,0 +1,20 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: 'BST169: Course Work Project answer'\nauthor: \"sn0wfree\"\ndate: \"11/10/2016\"\noutput: \n  pdf_document: \n    latex_engine: xelatex\n    number_sections: yes\n    toc: yes\n---\n\n#BST169: Course Work Project\n\nthere are 5 questions\n\n\n## topic 1:\n\n1. Consider  the model:\n\n\\centerline{$y_i = \\beta_0 +\\beta_1*x_{1,i} +\\beta_2*x_{2,i} +e_i$   (1)}\n\nWhat is the requirement for $e_i$ such that the following test statstics will\nbe valid to test H0: $\\beta_1 + \\beta_2 =1$? \n\n + $W=N*(SSR_{R} - SSR_{U})/SSR_{U}$  (Wald).\n + $LM = N*(SSR_{R} - SSR_{U})/SSR_{R}$ (Lagrange Multiplier),\n + $LR = N* ln(SSR_{R}/SSR_{U})$ (Likelihood Ratio)\n\nwhere $SSR_{R}$ is the sum of squared residuals obtained from the restricted model, \nwhile $SSR_{R}$ is from the unrestricted model.\n\n\n## topic 2\n\n2. For the data set **pbp.csv**, can we use the **three test statistics** mentioned in the previous question to test H0 :  $\\beta_{1} + \\beta_{2} = 1$? Why? \nIf W and LM are not valid, how can one modify them for the test? \nWhat is your conclusion from the valid test?\n\n## topic 3\n\n3. Generate $y_{i}$ from the following model,\n\n\\centerline{$y_i = \\beta_0 + \\beta_{1}*x_{1,i} +(1=\\beta_{1})*x_{2,i} +\\sqrt{x_{1,i}}*\\epsilon_{1}$   (2)}\n\nwhere $x_{1,i}$ follows chi-squared distribution with 2 degrees of freedom. \nGenerate $\\epsilon_{1}$ from student t distribution with 6 degrees of freedom and $x_{2,i}~U(0,10)$. Check whether $W$, $LM$ and $LR$ in Question 1 follow chi-squared distribution by Monte Carlo.(The R command ks.test( ,’pchisq’,2) can be used.) \nIf W and LM are not valid, calculate the correct test statistics and also verify them by Monte Carlo. Please consider different sample sizes.\n\n## topic 4\n\nCompare the size of di↵erent test statistics (frequencies of making Type 1 error) from Monte Carlo using 5% level of significance for different sample sizes. Explain the results.\n\n## topic 5\n\nFor the data set pbp.csv, suppose Equation (2) is the true model. Use proper bootstrapped errors from the true model to study whether different test statistics for H0 :  $\\beta_{1} + \\beta_{2} = 1$ in the previous questions follow chi-squared distribution. Explain your results.\n\n",
+    "created" : 1478992170545.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "963647740",
+    "id" : "9D2ED94C",
+    "lastKnownWriteTime" : 1478991450,
+    "last_content_update" : 1478991450,
+    "path" : "~/Dropbox/PhD(1st)/BST169 Econometrics/crousework project/BST169Coursework project answer.Rmd",
+    "project_path" : "BST169Coursework project answer.Rmd",
+    "properties" : {
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

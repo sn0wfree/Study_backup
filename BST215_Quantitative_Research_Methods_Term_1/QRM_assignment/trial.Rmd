@@ -1,0 +1,67 @@
+---
+title: "trials"
+author: "sn0wfree"
+date: "11/17/2016"
+output:
+  pdf_document:
+    latex_engine: lualatex
+    number_sections: yes
+    toc: yes
+  html_document:
+    toc: yes
+---
+
+
+# trial for the assisgnment
+
+Note:All data are from USA government
+
+```{r importdata}
+assig<-read.csv("States facts.csv",header=TRUE)
+all<-read.csv("all.csv",header=1)
+head(all)
+```
+
+```{r analysis}
+boxplot(all$Collectivism)
+boxplot(all$Ln.Firms.per.capita.)
+qqnorm(all$Collectivism)
+qqplot(all$Collectivism,all$Ln.Firms.per.capita.)
+hist(all$Ln.Firms.per.capita.)
+wilcox.test(all$Collectivism,all$Ln.Firms.per.capita.)
+barplot(all$Collectivism)
+pairs(all)
+cor.test(all$Ln.Firms.per.capita.,all$Collectivism)
+cor.test(all$Ln.Firms.per.capita.,all$Collectivism,method="spearman")
+cor.test(all$Ln.Firms.per.capita.,all$Collectivism,method="kendall")
+plot(all$Ln.Firms.per.capita.,all$Collectivism,pch=19,cex=2,col="red")
+points(lowess(all$Ln.Firms.per.capita.,all$Collectivism),pch=15,cex=2,col="blue")
+```
+```{r regression}
+reglmcollectivism<-lm(all$Collectivism~all$Ln.Firms.per.capita.)
+summary(reglmcollectivism)
+head(resid(reglmcollectivism))
+head(reglmcollectivism$residuals)
+boxplot(reglmcollectivism$residuals)
+qqnorm(reglmcollectivism$residuals,pch=7,col="blue")
+plot(all$Collectivism,reglmcollectivism$residuals,pch=17,col="blue")
+```
+
+```{r createamultidataset}
+lm2<-lm(all$Collectivism~all$pcUnion)
+summary(lm2)
+scatter.smooth(all$Collectivism,all$pcUnion)
+plot(all$Collectivism,all$pcUnion,pch=12,col="green")
+points(lowess(all$Collectivism,all$pcUnion),f=3/4,pch=15,col="red")
+cor.test(all$Collectivism,all$pcUnion)
+#m12m2<-lm(reglmcollectivism$residuals~all$pcUnion)
+#summary(m12m2)
+boxplot(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
+barplot(table(all$pcUnion[all$RIght2Work=="Yes"]))
+barplot(table(all$pcUnion[all$RIght2Work=="No"]))
+t.test(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
+wilcox.test(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
+boxplot(all$Collectivism[all$RIght2Work=="Yes"],all$Collectivism[all$RIght2Work=="No"])
+wilcox.test(all$Collectivism[all$RIght2Work=="Yes"],all$Collectivism[all$RIght2Work=="No"])
+```
+

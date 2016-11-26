@@ -1,0 +1,350 @@
+---
+title: "Session1-5 for Econometrics"
+author: "sn0wfree"
+date: "11/12/2016"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+  html_document:
+    theme: readable
+    toc: yes
+---
+
+#Session1-5 
+
+## Basic Objects
+
+### list enviornment
+
+```{r list enviornment}
+ls()# to list the current environment
+```
+
+## Vector and Matrix
+### Vector
+to create Vector based on c() function
+c() function is the function to create tuple or called Vector
+```{r Vector}
+# c():create a tuple, also can be seen a Vector if it is numberic tuple. because the tuple is the list with ordered element
+nv=c(6,5,4,3,2,1)
+cv=c("a string of characters","also a string of characters")
+nv[3]
+cv[1]
+vec=vector(mode = "list",length = 2)# in the mode, there are three options:"list", "experession" and "any"
+length(nv) #show the number of elements
+min(nv) #minimum value of nv
+which.min(nv) #the index of the minimum value of nv
+max(nv) #maximum value of nv
+which.max(nv) #the index of the maximum value of nv sort(nv,decreasing=TRUE) #list nv’s elements of nv decreasingly,decreasing is an optional argument with default value FALSE
+nv[2:5] #print 2-5 elements of nv
+```
+
+the code for matrix is matrix():it look like a dataframe  
+```{r Matrix}
+m1=matrix(nv,nrow=3,ncol=2)
+m1
+class(nv)#class() function is to show the class of target element, like the type function in Python
+class(m1)
+#show the dimension
+attributes(nv)
+attributes(m1)# show the dimension of element:(row,colmn)
+dim(m1)#another function can show the dimension as well:(row,colmn)
+
+
+m1[3,2] #print the (3, 2) element of m1
+m1[,2] #print the 2nd column of m1
+
+2*m1 #scalar multiplication
+diag(2) #identity matrix of dimension 2
+rep(1,2) #replicate 1 twice,this function can create the identity matrix
+cbind(rep(1,6),nv) #put two vectors vertically together to make a matrix
+m3=m1%*%t(m1) #t() is to transpose a matrix and %*% is for matrix multiplication
+
+qr(m3)#A=QR,use QR Decomposition: an orthogonal matrix Q and an upper triangular matrix R. QR decomposition is often used to solve the linear least squares problem, and is the basis for a particular eigenvalue algorithm, the QR algorithm
+qr(m3)$rank #rank of m3
+diag(m3)#extract the diagonal of a matrix(m3)
+
+sum(diag(m3)) #trace of m3: the trace of an n-by-n square matrix A is defined to be the sum of the elements on the main diagonal (the diagonal from the upper left to the lower right) of A
+diag(m3)<-1#replace the diagonal of matrix with 1
+solve(m3) #inverse of m3
+```
+
+## Infinite Values and Missing Data
+
+the computer software exist several limit on the precision format and 32-bit/64-bit limit
+
+```{r limits on R}
+typeof(1.9)# another kind of class funtion with more detail in the numeric part, it categories the type of numeric with double(floating), integer number.
+
+as.integer(1.9)# this function transfer the 1.9(double numeric) into the integer number 
+is.integer(1.9)# this function judege the type of this number(a),return the pool value:(FASLE or TRUE)
+as.integer(2^31 - 1) #transfer (2^31 - 1) into integer number ,larger than this number  can not  be calculated
+2^1024 #this is also too larger than the upper limits which is based on the 32-bit limit of software
+```
+
+## Probability Related Functions
+
+```{r probability, random and normal distribution}
+runif(n=10,min = 1,max = 10)# generate 10 random numbers uniformly from 1 to 10
+rnorm(n=10,mean=0,sd=1)# generate 10 normally distributed random numbers with mean=0 and standard deviation =1
+rt(n=10,df=2) # generate 10 random numbers from student t-distribution with df=2 degress of freedom
+dnorm(0.005) # return the density function value of standard normal distribution evaluated at 0.005
+pnorm(0.5) # return the cumulative distribution function of standard normal distribution eveluated at 0.5
+qnorm(p=0.25) # return the 0.25th quantile of standard normal distribution(0<=p<=1)
+```
+
+## Other Useful Objetcs
+### Factor object
+organize the data point into different categories.- tag as character variable
+retag the data point with factor tag,
+```{r factor object}
+gender<-factor(c("male","male","male","female","female"))# create two level categories: male and female
+levels(gender)# show the categories.
+```
+
+### Time Series Object
+use ts() function to create a special vector with a time index.
+
+```ts(data,start=c(start-year,start-mounth),frequency)``` will create a series of random normally dirtributed numbers (n=100) and order them by mounths, and start mouths is april 1987 (12 mouths as a circle; mounthly times series). if change the freq as 4, so it will create quarterly times series. other freq will not be defined as times series,but based on year.
+
+```{r times series object}
+myts1=ts(data=rnorm(100),start=c(1987,4),freq = 12)#create a series of random normally dirtributed numbers (n=100) and order them by mounths, and start mouths is april 1987 (12 mouths as a circle; mounthly times series). if change the freq as 4, so it will create quarterly times series. other freq will not be defined as times series,but based on year
+tsp(myts1) # return the start, end time(in numeric format) and frequency
+```
+
+### List Object
+use list objects(```list()```) to contain the data with different types/classes
+
+```{r List object}
+lobj<-list(name="Jack",stid=123,score=100)# create a list with different attributes,it likes the dictionary in the Python. in the list, there exist the order.
+lobj$name# will print the value of name in list of lobj
+lobj[2]# will print the 2rd element,include the name and value
+lobj[[2]] # will print the value of 2rd element, if there not exist the name, will use the order instead, like "name" in lobj will be replace as [[1]] 
+lobj2 =vector(mode="list",length = 2)# in the mode, there are three options:"list", "experession" and "any"
+lobj2[[1]]<-lobj # put the lobj into the 2rd element of lobj2
+lobj2[[1]]<-list(name="Jack",stid=123,score=100)# equivalently lobj2[[1]]<-lobj 
+lobj2[[2]]<-list(name="Mike",stid=245,score=60)
+lobj2[[1]]$stid # the find student's ID number
+lobj2[[2]][[3]] # the second student's score
+```
+
+
+### Dataframe Object
+the dataframe is the most important function for data mining and data analysis, and it can help us to contain exteran data file into R. and almost all the data will be handle in the dataframe
+use ```setwd()``` fucntion to set up the working directory, that can help us more easy to import the data and
+#### set up working directory and import data 
+```{r setwrkdir&importdata}
+setwd("/Users/sn0wfree/Dropbox/PhD(1st)/sn0wfree.github.io/BST169_Econometrics/computing/session1-5")#setup the working directory
+london<-read.csv('london.csv')# import data from london.csv
+class(london)
+typeof(london)
+
+```
+#### structure, head and colname
+now about look the structure of data,  head of data and  the label or colmn's name
+```{r str,colname and head}
+str(london)# show the structure of data, include the types, observation and variables
+head(london)# show first 6 row 
+colnames(london)# show the label or colmn's name, also called the variables' name
+london$wcloth# show the wcloth variable in the london dataset.
+london[,1]=as.character(london[,1])# reset the 1st column as.character
+```
+
+### Some Statistical Functions
+Some useful Statistical Functions
+```{r Some Statistical Functions}
+sum(london$income)#sum of the income of all obervations in london dataset
+mean(london$income)
+var(london$income)
+sd(london$income)
+quantile(london$income)
+hist(london$income,breaks=10000,freq = FALSE)# draw a histogram based on london$income, the breaks is the number of cells,freq: show the freqency of not, if FALSE(or 0) present Density, if TRUE(or 1) present freqency
+hist(london$income,breaks=1000,freq = FALSE)
+hist(london$income,breaks=100,freq = FALSE)
+hist(london$income,breaks=10,freq = FALSE)
+hist(london$income,breaks=10,freq = TRUE)
+plot(london$income)
+plot(london$income,london$totexp)
+boxplot(london$income,london$totexp)#draw a boxplot
+qqnorm(london$income)#plot the qq-plot
+which(london$income>140)#return the indices for observations with income higher than 140.
+cov(london$income,london$totexp)# show the sample covariance between income and total expenditure.
+cor(london[,2:11])#sample correlation matrix for the 2-11 variables(columns) in london
+summary(london[,2:11])#summary some statistics for the 2-11 variables(columns) in london
+colSums(london[,2:11])# return the column sums of the 2-11 variables in 
+#rowSums(london[2:11,])# return the row sums of the 2-11 rows in london
+```
+
+Question 1: Can you find out which variables have missing obervation(s)? in what positions?
+
+**1st: use manual way to seek the missing data**
+```{r Answer to Question 1:scan_the_missing_data:Manual}
+
+#colSums(london)# 2 columns:wcloth and walc
+#rowSums(london)# 2 rows: 10 and 15
+
+london$wcloth[10]#NA
+london$walc[15]#NA
+is.na(london$wcloth[1:20])
+```
+
+**2rd: use auto way to seek the missing data**
+```{r  Answer to Question 1:scan_the_missing_data:Auto}
+setwd("/Users/sn0wfree/Dropbox/PhD(1st)/sn0wfree.github.io/BST169_Econometrics/computing/session1-5")#setup the working directory
+london<-read.csv('london.csv')# import data from london.csv
+
+compare_missing_data_function<-function(symbol){
+  b<-c()
+  for (i in 1:length(symbol)){
+    if(is.na(symbol[i])==TRUE){
+      b=append(b,i)
+    }
+  }
+  return(b)
+}
+
+seek_missing_data<- function(data){
+  missing_data_location<-c()
+  missing_col_number<-compare_missing_data_function(colSums(data))
+  missing_row_number<-compare_missing_data_function(rowSums(data))
+  for(i in missing_col_number){
+    for(j in missing_row_number){
+      if (is.na(data[j,i])==TRUE){
+        missing_data_location<-append(missing_data_location,c(names(data)[i],j))}
+      }
+  }
+  return(missing_data_location)
+}
+
+seek_missing_data(london)
+```
+
+## Least Squares Regression
+
+### OLS
+
+```{r OLS}
+lmobj<-lm(wfood~log(totexp)+log(income),data=london)
+summary(lmobj)#summary of the fitted model
+typeof(lmobj)# is a list
+class(lmobj)# is a "lm"
+```
+
+```typeof(lmobj)``` and ```class(lmobj)``` have different return value
+
+```{r some values}
+coef(lmobj)#estimated model parameters (estimated_beta of OLS) 
+head(resid(lmobj)) #estimated residuals M_{x,y}
+head(fitted(lmobj)) #fitted values of the model (P_{x,y}) 
+deviance(lmobj) #the residual sum of squares (SSR or y'M_{x,y}) 
+confint(lmobj) #confidence interval
+logLik(lmobj) #value of the log likelihood function (assume normal er- ror)
+AIC(lmobj,k=2) #information criterion, k = 2 for AIC and k = log(N) for BIC (assume normal error, to be covered later)
+vcov(lmobj)# estimated-beta OLS’s estimated variance-covariance matrix (\espison^{hat}_{2}(X'X)_{-1}) 
+anova(lmobj) #returns an anova table; ANOVA analysis
+predict(lmobj,data.frame(totexp=1,income=1)) #returns predictions 
+par(mfrow=c(1,2))#par graphes by 2*2
+plot(lmobj) #create diagnostic plots
+par(mfrow=c(1,1))#restore the default one
+```
+
+Question 2: Can you use matrix algebra in R to reproduce the outputs of the following functions:
+
+  1. ```coef(lmobj)```
+  
+  2. ```resid(lmobj)```
+  
+  3. ```fitted(lmobj)```
+  
+  4. ```deviance(lmboj)```
+  
+  5. ```vcov(lmboj)```
+  
+Equation:
+
+  1). the normal form :
+\begin{center} 
+$wfood=\beta_0+\beta_1*totexp+\beta_2*income+\epsilon$
+\end{center}
+  2). the matrix form:
+  
+\begin{center} 
+$wfood = x*\beta + \epsilon$
+\end{center}
+here, 
+\begin{center} 
+$x= 
+|\begin{matrix}
+\beta_0 & totexp & income
+\end{matrix}$|
+\end{center}
+
+because the matrix form can be easy solved out
+thus, i show the solution of this OLS methods:
+
+the OLS mainly aims to solve the $\beta$, based on the minimum of Sum Squared Residuals(SSR):
+
+in normal form
+\begin{center} 
+$SSR=\sum_{i=1}^N\epsilon^2$
+\end{center}
+
+in matrix form
+\begin{center} 
+$SSR=(wfood-x\beta)'*(wfood-x\beta)$
+\end{center}
+
+and minimize the SSR 
+
+\begin{center} 
+$\min{SSR}=\min{(wfood-x\beta)'*(wfood-x\beta)}$
+\end{center}
+
+for minimum, i make the 1st different should as zero. Thus,
+\begin{center}
+$\frac{\mathrm{d}(wfood-x\beta)'*(wfood-x\beta)}{\mathrm{d}\beta}=0$
+\end{center}
+
+\begin{center}
+$\frac{\mathrm{d}(wfood-x\beta)'*(wfood-x\beta)}{\mathrm{d}\beta}=\frac{\mathrm{d}(wfood'-\beta'x')*(wfood-x\beta)}{\mathrm{d}\beta}=0$
+\end{center}
+
+\begin{center}
+$\frac{\mathrm{d}(wfood-x\beta)'*(wfood-x\beta)}{\mathrm{d}\beta}=\frac{\mathrm{d}(wfood'*wfood-2\beta'x'y+\beta'x'x\beta)}{\mathrm{d}\beta}=0$
+\end{center}
+here, the $wfood'*wfood$ and $\beta'x'y$ are non-beta martix or single-beta matrix, after differentiate on $\beta$, there will left 0 and the coefficent of single-beta:$x'y$. Thus,
+\begin{center}
+$\frac{\mathrm{d}(wfood-x\beta)'*(wfood-x\beta)}{\mathrm{d}\beta}=0-2x'y+2x'x\beta=0$
+\end{center}
+and 
+\begin{center}
+$\beta=(x'x)^{-1}x'y$
+\end{center}
+that is the solution of beta from OLS methods
+
+```{r Answer to Question 2}
+x<-cbind(rep(1,length(london$wfood)),log(london$totexp),log(london$income))# create the martix x in the equation (1)
+coef_of_lmboj<-solve(t(x)%*%x)%*%t(x)%*%london$wfood#coef(lmobj)
+coef(lmobj)
+coef_of_lmboj
+
+
+fitted_of_lmobj<-x%*%coef_of_lmboj#fitted(lmobj)
+head(fitted(lmobj))
+head(fitted_of_lmobj)
+
+resid_of_lmobj<-london$wfood-x%*%coef_of_lmboj#resid(lmobj)
+head(resid(lmobj))
+head(resid_of_lmobj)
+
+deviance_of_lmobj<-t(resid_of_lmobj)%*%resid_of_lmobj#just calulate the SSR,equal to deviance(lmobj)
+head(deviance(lmobj))
+head(deviance_of_lmobj)
+
+vcov(lmobj)
+```
+
+  
+

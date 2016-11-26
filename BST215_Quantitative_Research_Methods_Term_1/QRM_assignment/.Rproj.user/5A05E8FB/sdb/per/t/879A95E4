@@ -1,0 +1,21 @@
+{
+    "collab_server" : "",
+    "contents" : "---\ntitle: \"trials\"\nauthor: \"sn0wfree\"\ndate: \"11/17/2016\"\noutput:\n  pdf_document:\n    latex_engine: lualatex\n    number_sections: yes\n    toc: yes\n  html_document:\n    toc: yes\n---\n\n\n# trial for the assisgnment\n\nNote:All data are from USA government\n\n```{r importdata}\nassig<-read.csv(\"States facts.csv\",header=TRUE)\nall<-read.csv(\"all.csv\",header=1)\nhead(all)\n```\n\n```{r analysis}\nboxplot(all$Collectivism)\nboxplot(all$Ln.Firms.per.capita.)\nqqnorm(all$Collectivism)\nqqplot(all$Collectivism,all$Ln.Firms.per.capita.)\nhist(all$Ln.Firms.per.capita.)\nwilcox.test(all$Collectivism,all$Ln.Firms.per.capita.)\nbarplot(all$Collectivism)\npairs(all)\ncor.test(all$Ln.Firms.per.capita.,all$Collectivism)\ncor.test(all$Ln.Firms.per.capita.,all$Collectivism,method=\"spearman\")\ncor.test(all$Ln.Firms.per.capita.,all$Collectivism,method=\"kendall\")\nplot(all$Ln.Firms.per.capita.,all$Collectivism,pch=19,cex=2,col=\"red\")\npoints(lowess(all$Ln.Firms.per.capita.,all$Collectivism),pch=15,cex=2,col=\"blue\")\n```\n```{r regression}\nreglmcollectivism<-lm(all$Collectivism~all$Ln.Firms.per.capita.)\nsummary(reglmcollectivism)\nhead(resid(reglmcollectivism))\nhead(reglmcollectivism$residuals)\nboxplot(reglmcollectivism$residuals)\nqqnorm(reglmcollectivism$residuals,pch=7,col=\"blue\")\nplot(all$Collectivism,reglmcollectivism$residuals,pch=17,col=\"blue\")\n```\n\n```{r createamultidataset}\nlm2<-lm(all$Collectivism~all$pcUnion)\nsummary(lm2)\nscatter.smooth(all$Collectivism,all$pcUnion)\nplot(all$Collectivism,all$pcUnion,pch=12,col=\"green\")\npoints(lowess(all$Collectivism,all$pcUnion),f=3/4,pch=15,col=\"red\")\ncor.test(all$Collectivism,all$pcUnion)\n#m12m2<-lm(reglmcollectivism$residuals~all$pcUnion)\n#summary(m12m2)\nboxplot(all$pcUnion[all$RIght2Work==\"Yes\"],all$pcUnion[all$RIght2Work==\"No\"])\nbarplot(table(all$pcUnion[all$RIght2Work==\"Yes\"]))\nbarplot(table(all$pcUnion[all$RIght2Work==\"No\"]))\nt.test(all$pcUnion[all$RIght2Work==\"Yes\"],all$pcUnion[all$RIght2Work==\"No\"])\nwilcox.test(all$pcUnion[all$RIght2Work==\"Yes\"],all$pcUnion[all$RIght2Work==\"No\"])\nboxplot(all$Collectivism[all$RIght2Work==\"Yes\"],all$Collectivism[all$RIght2Work==\"No\"])\nwilcox.test(all$Collectivism[all$RIght2Work==\"Yes\"],all$Collectivism[all$RIght2Work==\"No\"])\n```\n\n",
+    "created" : 1479381404481.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "1337603291",
+    "id" : "879A95E4",
+    "lastKnownWriteTime" : 1479387487,
+    "last_content_update" : 1479387487049,
+    "path" : "~/Dropbox/PhD_1st/sn0wfree.github.io/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/trial.Rmd",
+    "project_path" : "trial.Rmd",
+    "properties" : {
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}

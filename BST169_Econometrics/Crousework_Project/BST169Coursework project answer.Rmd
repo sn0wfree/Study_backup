@@ -1,0 +1,57 @@
+---
+title: 'BST169: Course Work Project answer'
+author: "sn0wfree"
+date: "11/10/2016"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+---
+
+#BST169: Course Work Project
+
+there are 5 questions
+
+
+## topic 1:
+
+1. Consider  the model:
+
+\centerline{$y_i = \beta_0 +\beta_1*x_{1,i} +\beta_2*x_{2,i} +e_i$   (1)}
+
+What is the requirement for $e_i$ such that the following test statstics will
+be valid to test H0: $\beta_1 + \beta_2 =1$? 
+
+ + $W=N*(SSR_{R} - SSR_{U})/SSR_{U}$  (Wald).
+ + $LM = N*(SSR_{R} - SSR_{U})/SSR_{R}$ (Lagrange Multiplier),
+ + $LR = N* ln(SSR_{R}/SSR_{U})$ (Likelihood Ratio)
+
+where $SSR_{R}$ is the sum of squared residuals obtained from the restricted model, 
+while $SSR_{R}$ is from the unrestricted model.
+
+
+## topic 2
+
+2. For the data set **pbp.csv**, can we use the **three test statistics** mentioned in the previous question to test H0 :  $\beta_{1} + \beta_{2} = 1$? Why? 
+If W and LM are not valid, how can one modify them for the test? 
+What is your conclusion from the valid test?
+
+## topic 3
+
+3. Generate $y_{i}$ from the following model,
+
+\centerline{$y_i = \beta_0 + \beta_{1}*x_{1,i} +(1=\beta_{1})*x_{2,i} +\sqrt{x_{1,i}}*\epsilon_{1}$   (2)}
+
+where $x_{1,i}$ follows chi-squared distribution with 2 degrees of freedom. 
+Generate $\epsilon_{1}$ from student t distribution with 6 degrees of freedom and $x_{2,i}~U(0,10)$. Check whether $W$, $LM$ and $LR$ in Question 1 follow chi-squared distribution by Monte Carlo.(The R command ks.test( ,’pchisq’,2) can be used.) 
+If W and LM are not valid, calculate the correct test statistics and also verify them by Monte Carlo. Please consider different sample sizes.
+
+## topic 4
+
+Compare the size of di↵erent test statistics (frequencies of making Type 1 error) from Monte Carlo using 5% level of significance for different sample sizes. Explain the results.
+
+## topic 5
+
+For the data set pbp.csv, suppose Equation (2) is the true model. Use proper bootstrapped errors from the true model to study whether different test statistics for H0 :  $\beta_{1} + \beta_{2} = 1$ in the previous questions follow chi-squared distribution. Explain your results.
+

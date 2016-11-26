@@ -1,0 +1,77 @@
+---
+title: "Quantitative Research Methods: history 1"
+author: "sn0wfree(edited)"
+date: "11/12/2016"
+output: 
+  pdf_document: 
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+---
+#history 1 for QRM
+
+show the name of dataset: using Wages.xls
+
+```{r dataset}
+# history1.R 6 Oct 2016
+# using Wages.xls
+```
+
+##import data
+1st step importing from xls or use copy function
+```{r import_data}
+#bug=read.table("clipboard",header=TRUE)<---this is for windows
+#bug=read.table(pipe("pbpaste"),header=TRUE)#<- this is for macos
+bug=read.csv("/Users/sn0wfree/Dropbox/PhD(1st)/BST 215Quantitative Research Methods term 1/r code/Wages.csv",header=TRUE)
+```
+
+##watch part of data
+```{r watch part of data}
+head(bug)#<- watch top 6 rows
+str(bug)#<- see the data frame for each variables
+colnames(bug)#<- show the name of columns:which means show the labels or variables name
+```
+
+##some statistical number
+
+```{r see some statistical number}
+mean(bug$Age)
+sd(bug$Age)
+median(bug$Age)
+
+```
+
+##attach?
+attach the dataset is just for saving time when type in some variables
+```{r attach}
+attach(bug)
+```
+
+##plot some graphes-1 
+```{r plot graph-1}
+boxplot(Age)
+boxplot(Wage)
+plot(Age,Wage)
+plot(lowess(Age,Wage))
+plot(lowess(Age,Wage,f=1/3))
+plot(lowess(Age,Wage,f=1/3),pch=19)
+plot(lowess(Age,Wage,f=1/3),pch=19,cex=2)
+plot(lowess(Age,Wage,f=1/3),pch=19,cex=2,col="red")
+```
+
+##plot some graphes-2
+```{r plot graph-2}
+plot(lowess(Age[Gender=="Female"],Wage[Gender=="Female"],f=1/3),pch=19,cex=2,col="red")#<lowess:Scatter Plot Smoothing.This function performs the computations for the LOWESS smoother which uses locally-weighted polynomial regression (see the references).
+
+points(lowess(Age[Gender=="Male"],Wage[Gender=="Male"],f=1/3),pch=19,cex=2,col="blue")
+#plot(c(15,65),c(0,12))
+plot(c(15,65),c(0,12),col="white")
+points(lowess(Age[Gender=="Male"],Wage[Gender=="Male"],f=1/3),pch=19,cex=2,col="blue")
+points(lowess(Age[Gender=="Female"],Wage[Gender=="Female"],f=1/3),pch=19,cex=2,col="red")
+```
+
+
+
+
+
+
