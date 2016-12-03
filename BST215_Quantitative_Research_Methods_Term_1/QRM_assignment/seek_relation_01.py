@@ -68,6 +68,7 @@ def return_cmline_for_ols(cor_dict):
             pass
     return inp
 def ols_write2command_test(all_list,Samematrix = 1,all_list_depen="NA",all_list_inpenden="NA"):
+    independ_vars=[]
     if Samematrix == 1:
         all_list_depen=all_list
         all_list_inpenden=all_list
@@ -84,43 +85,57 @@ def ols_write2command_test(all_list,Samematrix = 1,all_list_depen="NA",all_list_
                 pass
             elif y!=x:
                 indepvar+=x
+                independ_vars.append(x)
+
                 count+=1
                 if count<(l):
                     indepvar+="+"
                 elif count==(l):
                     pass
         if indepvar!=[]:
-            equ[y]=depvar+indepvar
+            equ[y]=(depvar+indepvar,independ_vars)
+        elif indepvar!=[]:
+            equ[y]=("Error",independ_vars)
+        #use dependent variables as key, and value include (formula , independ_vars)
+
     return equ
 
-def do_ols_test(equ_R_form,dataset):
-    mod_temp=smf.ols(formula=equ_R_form, data=dataset)
-    res_temp = mod_temp.fit()
-    #print res_temp.summary()
+def do_ols_test(equ_R_form,dataset,printout=False):
+    res_temp=smf.ols(formula=equ_R_form, data=dataset).fit()
+    if printout:
+        print res_temp.summary()
+    else:
+        pass
     return res_temp
 
 def find_largest_p_value(res_temp):
-    #initialization
-    res_t=res_temp.pvalues.to_frame()
-    variables_label=res_t.index
-    top_value=res_t[0][1]
-    top_label=variables_label[1]
-    length=len(res_t[0])#[1:]
+    res_pvlaue=res_temp.pvalues
+    res_var=res_temp.pvalues.to_frame().index
+    res_r2=res_temp.rsquared
+    #res_params=res_temp.params
+    top_pvalue=0
+    varname="NA"
+    for x in xrange(len(res_pvlaue)):
+        if res_var[x] != "Intercept":
+            if res_pvlaue[x]>=top_pvalue:
+                if res_pvlaue[x]>0.1:
+                    top_pvalue=res_pvlaue[x]
+                    varname=res_var[x]
 
-    for x in xrange(1,length):
-        if res_t[0][x]>=top_value:
-            top_value=res_t[0][x]
-            top_label=variables_label[x]
+            else:
+                pass
         else:
             pass
-    return (top_label,top_value)
+
+    #print (round(top_pvalue,4),varname,round(res_r2,4))
+    return (top_pvalue,varname,res_r2)
 if __name__ == '__main__':
-    file_names="/Users/sn0wfree/Dropbox/PhD_1st/sn0wfree.github.io/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/all.csv"
+    file_names="/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/all.csv"
     #cor_file="/Users/sn0wfree/Dropbox/PhD_1st/sn0wfree.github.io/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/cor.csv"
 
     all_test=readacsv(file_names)
     del all_test['state']
-    all_list=all_test.keys().tolist()
+    all_var_list=all_test.keys().tolist()
 
     #variables=all_test['Unnamed: 0'].tolist()
     #print all_list[0]
@@ -130,25 +145,24 @@ if __name__ == '__main__':
     gc.enable()
 #    ols_test(all_list)
 
-    equ=ols_write2command_test(all_list)
+    equ=ols_write2command_test(all_var_list)
+    depen_var=equ.keys()
 
-    equation=equ.keys()
     #print equ[equation[3]]
     #print equation
 
 
-    #for x in equation:#2
-    x=equation[10]
-    if x!=0:
+    for y in depen_var:
+        if y!="Error":
 
-        res_temp=do_ols_test(equ[x],all_test)
-        print res_temp.summary()
+            (equation_formula,independ_vars)=equ[y]
 
-        res_all={}
-        res_all[x]=res_temp
+            res_temp=do_ols_test(equation_formula,all_test,printout = 0)
 
-        (top_label,top_value)=find_largest_p_value(res_temp)
-        print (top_label,top_value)
+            (top_value,top_label,res_r2)=find_largest_p_value(res_temp)
+            #print (top_value,top_label)
+
+    #x=equation[11]
 
 
 

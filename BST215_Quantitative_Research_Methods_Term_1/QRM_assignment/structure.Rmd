@@ -1,0 +1,22 @@
+---
+title: "Structure for QRM"
+output: html_notebook
+---
+
+
+## structure
+
+### introduction
+provide a description for some issues which can be studied or presented in follow paragraph
+
+## methods
+
+### plot
+1. boxplot
+2. qqnorm/qqplot
+
+give a hypothesis test for the phonomenon 
+use t test (hypthesis test) for test differentie of target variables
+
+and control other variables
+

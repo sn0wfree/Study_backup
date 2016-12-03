@@ -1,0 +1,59 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+## Review
+  + times series data
+  + cross sectional data
+  + panel data
+
+-------------
+
++ var($\beta$)
++ LLN
++ CLT
+
+---------
+all of there related (y) sample average, if sample size go to infinite. the 
+
+## Issues
+three main issues for economtrics:
+1. Estimation: to estimate model
+2. Inference: hypothesis test
+3. Forecast
+
+## Methods
+Methods:
+  1. OLS
+  2. GMM
+  3. MLE
+  
+
+$\theta$~normal distribution
+$\theta$%*%solve($\theta$)~chi-square distribution
+
+Wald
+LM
+LR
+
+h0:s($\beta$)=0
+if no linear model,LM
+
+\center{R$\beta$-$\gamma$=0}
+
+
+$\sqrt(n)(R\beta-\gamma)$~N
+
+$\sqrt(n)(s($\beta$))$~N
+
+Monte Carlo method；Bootstrap
+
+
+qt(0.95,40):(confident level, degree of freedom)
+
+chisq(4,3):(value,degree of freedom)
+
+
+
+  

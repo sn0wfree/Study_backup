@@ -40,6 +40,9 @@ def cor2collect_dict_list_function(corr_test):
                 pass
         cor_dict[x]=cor_list
     return cor_dict
+
+
+
 def return_cmline_for_ols(cor_dict):
     keys=cor_dict.keys()
     inp={}
@@ -67,14 +70,40 @@ def return_cmline_for_ols(cor_dict):
             pass
     return inp
 
+def return_maxpvlaue_and_label(res_temp):
+
+    res_pvlaue=res_temp.pvalues
+
+    res_var=res_temp.pvalues.to_frame().index
+    res_r2=res_temp.rsquared
+
+
+    res_params=res_temp.params
+    top_pvalue=0
+    varname="NA"
+    for x in xrange(len(res_pvlaue)):
+        if res_var[x] != "Intercept":
+            if res_pvlaue[x]>=top_pvalue:
+                if res_pvlaue[x]>0.1:
+                    top_pvalue=res_pvlaue[x]
+                    varname=res_var[x]
+
+            else:
+                pass
+        else:
+            pass
+
+    #print (round(top_pvalue,4),varname,round(res_r2,4))
+    return (top_pvalue,varname,res_r2)
+
 if __name__ == '__main__':
-    file_names="/Users/sn0wfree/Dropbox/PhD_1st/sn0wfree.github.io/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/all.csv"
+    file_names="/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/all.csv"
     #cor_file="/Users/sn0wfree/Dropbox/PhD_1st/sn0wfree.github.io/BST215_Quantitative_Research_Methods_Term_1/QRM_assignment/cor.csv"
 
     all_test=readacsv(file_names)
     #variables=all_test['Unnamed: 0'].tolist()
     #del all_test['Unnamed: 0']
-    all_test
+    #all_test
     res={}
     gc.enable()
 
@@ -85,34 +114,47 @@ if __name__ == '__main__':
     inp=return_cmline_for_ols(cor_dict)
     #print inp["pop2010"]
     keys=inp.keys()
-    key="pop2010"
+    #key="pop2010"
     goodvar_dict={}
-    keys_backup=keys
+    #keys_backup=keys
     #print keys[35]
     #del keys[35]
 
     #print len(keys),keys[36],type(keys)
-    for key in keys:
-    #if key=="pop2010":
+    #for key in keys:
+    key="emitrate"
+    if key=="emitrate":
 
         mod_temp=smf.ols(formula=inp[key], data=all_test)
         res_temp = mod_temp.fit()
-        #print res_temp.summary()
-        res_data=res_temp.pvalues.to_frame()
+
+        (top_pvalue,varname,res_r2)=return_maxpvlaue_and_label(res_temp)
+        print (key,round(top_pvalue,4),varname,round(res_r2,4))
+        print res_temp.summary()
+
+
+
+
+
+
+        #res_pvlaue=res_temp.pvalues.to_frame()
         #print res_data
-        goodvar_list=[]
+        goodvar_dict={}
         #print res_data
-        for p_label in res_data.index:
-            if res_data[0][p_label]<=0.1:
-                if p_label!="Intercept":
-                    goodvar_list.append((p_label,0.8))
+        #for p_label in res_data.index:
+        #    if p_label != "Intercept":
+        #        goodvar_dict[res_data[0][p_label]]=p_label
+
+
+
+
 
         #print goodvar_list
-        if goodvar_list!=[]:
-            goodvar_dict[key]=goodvar_list
+        #if goodvar_list!={}:
+        #    goodvar_dict[key]=goodvar_list
     #print goodvar_dict
 
-
+"""
     rr=return_cmline_for_ols(goodvar_dict)
 
     kk=rr.keys()
@@ -120,3 +162,4 @@ if __name__ == '__main__':
         mod_temp=smf.ols(formula=rr[key], data=all_test)
         res_temp = mod_temp.fit()
         print res_temp.summary()
+"""

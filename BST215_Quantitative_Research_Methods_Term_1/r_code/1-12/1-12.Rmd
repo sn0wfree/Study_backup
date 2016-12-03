@@ -1,0 +1,111 @@
+---
+title: "QRM trials"
+author: "sn0wfree"
+output:
+  html_notebook:
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+#have a try
+
+## import data
+```{r importdata}
+#dd=read.table("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Demographics.csv",header=TRUE,sep=",")
+dd=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Demographics.csv",header=TRUE)
+head(dd)
+```
+
+
+## boxplot
+```{r boxplot}
+boxplot(dd$wage)
+boxplot(dd$wage~dd$married)
+boxplot(dd$wage,dd$married)
+
+mean(dd$wage)
+table(dd$south,dd$married)
+by(dd$wage,dd$south,mean)
+by(dd$wage,dd$brthord,mean)#calculate mean of wage grouping by brthord
+```
+## compare image
+```{r compareimage}
+par(mfrow=c(1,2))
+plot(dd$hours,dd$wage)
+plot(dd$IQ,dd$wage)
+median(x = dd$IQ)
+plot(dd$IQ,dd$hours)
+par(mfrow=c(1,1))
+par(mfrow=c(1,2))
+plot(dd$IQ,dd$hours)
+points(lowess(dd$IQ,dd$hours),col="red",pch=19)
+cor.test(dd$IQ,dd$hours)
+#
+plot(dd$IQ,dd$wage)
+points(lowess(dd$IQ,dd$wage),col="blue",pch=21)
+points(lowess(dd$IQ,dd$wage,f=1/3),col="orange",pch=18)
+cor.test(dd$IQ,dd$wage)
+```
+## forloop
+```{r forloop}
+t.test(dd$wage,mu=950)
+t.test(dd$wage,dd$hours)
+t.test(dd$wage[dd$brthord==1],mu=900)
+max(dd$brthord)
+i=1
+for(i in c(1,2,3,4,5,6,7,8,10)){print (t.test(dd$wage[dd$brthord==i],mu=900))}
+
+for(i in c(1,2,3,4,5,6,7,8,10)){temp=t.test(dd$wage[dd$brthord==i],mu=900)
+print (temp)}
+
+temp_t=0
+temp_estimate=0
+temp_df=0
+temp_pvalue=0
+
+for(i in c(1,2,3,4,5,6,7,8,10)){temp=t.test(dd$wage[dd$brthord==i],mu=900)
+
+temp_t[i]=temp$statistic
+temp_estimate[i]=temp$estimate
+temp_df[i]=temp$parameter
+temp_pvalue[i]=temp$p.value}
+
+table(dd$brthord)
+plot(temp_df,temp_t,pch=19,cex=3,col="blue")
+
+```
+
+## trials
+```{r trials}
+par(mfrow=c(1,2))
+plot(temp_df,temp_t,pch=19,cex=3,col="red")
+plot(temp_t,pch=19,cex=3,col="skyblue")
+mean_birthord=0
+for(i in 1:max(dd$brthord)){mean_birthord[i]=mean(dd$brthord[dd$brthord==i])}
+
+par(mfrow=c(2,2))
+plot(temp_df,temp_t,pch=19,cex=3,col="red")
+plot(temp_t,pch=19,cex=3,col="red")
+plot(temp_df,temp_estimate,pch=19,cex=3,col="blue")
+plot(temp_estimate,pch=19,cex=3,col="blue")
+
+plot(jitter(dd$brthord,factor=2),dd$wage)
+points(lowess(dd$brthord,dd$wage),pch=19,col="pink",cex=3)
+
+hist(dd$brthord)
+
+plot(dd$brthord,dd$wage)
+cor.test(dd$brthord,dd$wage)
+
+sd_bir=0
+for(i in c(1,2,3,4,5,6,7,8,10)){sd_bir[i]=sd(dd$wage[dd$brthord==i])
+print (sd_bir[i])}
+
+plot(sd_bir,pch=19,cex=3,col="red")
+
+
+plot(dd$IQ,dd$brthord)
+
+```
+
