@@ -3,11 +3,11 @@ title: "trials"
 author: "sn0wfree"
 date: "11/17/2016"
 output:
+  html_document:
+    toc: yes
   pdf_document:
     latex_engine: lualatex
     number_sections: yes
-    toc: yes
-  html_document:
     toc: yes
 ---
 
@@ -17,7 +17,6 @@ output:
 Note:All data are from USA government
 
 ```{r importdata}
-assig<-read.csv("States facts.csv",header=TRUE)
 all<-read.csv("all.csv",header=1)
 head(all)
 ```
@@ -38,30 +37,30 @@ plot(all$lnfirmspercapita,all$collectivism,pch=19,cex=2,col="red")
 points(lowess(all$lnfirmspercapita,all$collectivism),pch=15,cex=2,col="blue")
 ```
 ```{r regression}
-reglmcollectivism<-lm(all$Collectivism~all$Ln.Firms.per.capita.)
+reglmcollectivism<-lm(all$collectivism~all$lnfirmspercapita)
 summary(reglmcollectivism)
 head(resid(reglmcollectivism))
 head(reglmcollectivism$residuals)
 boxplot(reglmcollectivism$residuals)
 qqnorm(reglmcollectivism$residuals,pch=7,col="blue")
-plot(all$Collectivism,reglmcollectivism$residuals,pch=17,col="blue")
+plot(all$collectivism,reglmcollectivism$residuals,pch=17,col="blue")
 ```
 
 ```{r createamultidataset}
-lm2<-lm(all$Collectivism~all$pcUnion)
+lm2<-lm(all$collectivism~all$pcunion)
 summary(lm2)
-scatter.smooth(all$Collectivism,all$pcUnion)
-plot(all$Collectivism,all$pcUnion,pch=12,col="green")
-points(lowess(all$Collectivism,all$pcUnion),f=3/4,pch=15,col="red")
-cor.test(all$Collectivism,all$pcUnion)
-#m12m2<-lm(reglmcollectivism$residuals~all$pcUnion)
+scatter.smooth(all$collectivism,all$pcunion)
+plot(all$collectivism,all$pcunion,pch=12,col="green")
+points(lowess(all$collectivism,all$pcunion),f=3/4,pch=15,col="red")
+cor.test(all$collectivism,all$pcunion)
+#m12m2<-lm(reglmcollectivism$residuals~all$pcunion)
 #summary(m12m2)
-boxplot(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
-barplot(table(all$pcUnion[all$RIght2Work=="Yes"]))
-barplot(table(all$pcUnion[all$RIght2Work=="No"]))
-t.test(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
-wilcox.test(all$pcUnion[all$RIght2Work=="Yes"],all$pcUnion[all$RIght2Work=="No"])
-boxplot(all$Collectivism[all$RIght2Work=="Yes"],all$Collectivism[all$RIght2Work=="No"])
-wilcox.test(all$Collectivism[all$RIght2Work=="Yes"],all$Collectivism[all$RIght2Work=="No"])
+boxplot(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+barplot(table(all$pcunion[all$right2work==1]))
+barplot(table(all$pcunion[all$right2work==0]))
+t.test(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+wilcox.test(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+boxplot(all$collectivism[all$right2work==1],all$collectivism[all$right2work==0])
+wilcox.test(all$collectivism[all$right2work==1],all$collectivism[all$right2work==0])
 ```
 

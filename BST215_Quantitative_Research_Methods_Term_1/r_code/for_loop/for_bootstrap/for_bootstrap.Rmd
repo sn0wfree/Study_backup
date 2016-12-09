@@ -3,11 +3,13 @@ title: "for_loop_and_more"
 author: "sn0wfree"
 date: "11/24/2016"
 output:
-  word_document:
+  html_document:
     toc: yes
   pdf_document:
     latex_engine: xelatex
     number_sections: yes
+    toc: yes
+  word_document:
     toc: yes
 ---
 # Quantitative Research Methods Term 1

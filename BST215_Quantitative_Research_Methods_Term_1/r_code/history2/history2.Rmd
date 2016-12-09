@@ -1,9 +1,11 @@
 ---
-title: "Quantitative Research Methods: history 2 "
+title: 'Quantitative Research Methods: history 2 '
 author: "sn0wfree"
 date: "11/12/2016"
-output: 
-  pdf_document: 
+output:
+  html_document:
+    toc: yes
+  pdf_document:
     number_sections: yes
     toc: yes
 ---
@@ -20,7 +22,7 @@ output:
 ```{r import_data}
 #bug=read.table("clipboard",header=TRUE)<---this is for windows
 #bug=read.table(pipe("pbpaste"),header=TRUE)#<- this is for macos
-bug=read.csv("/Users/sn0wfree/Dropbox/PhD(1st)/BST 215Quantitative Research Methods term 1/r code/Wages.csv",header=TRUE)
+bug=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Wages.csv",header=TRUE)
 ```
 
 ##watch part of data

@@ -1,9 +1,11 @@
 ---
-title: "Quantitative Research Methods: history 3"
+title: 'Quantitative Research Methods: history 3'
 author: "sn0wfree"
 date: "11/12/2016"
-output: 
-  pdf_document: 
+output:
+  html_document:
+    toc: yes
+  pdf_document:
     number_sections: yes
     toc: yes
 ---
@@ -16,7 +18,7 @@ use Demographics.xls
 
 ```{r import data and attach}
 #somA=read.table("clipboard",header=TRUE)
-somA=read.csv("/Users/sn0wfree/Dropbox/PhD(1st)/BST 215Quantitative Research Methods term 1/r code/Demographics.csv",header=TRUE)
+somA=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Demographics.csv",header=TRUE)
 #head(soma) # WRONG. Capital A.
 head(somA)
 attach(somA)

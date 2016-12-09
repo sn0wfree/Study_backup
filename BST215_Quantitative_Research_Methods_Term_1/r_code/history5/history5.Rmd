@@ -1,9 +1,11 @@
 ---
-title: "Quantitative Research Methods: history 5 "
+title: 'Quantitative Research Methods: history 5 '
 author: "sn0wfree"
 date: "11/12/2016"
-output: 
-  pdf_document: 
+output:
+  html_document:
+    toc: yes
+  pdf_document:
     latex_engine: xelatex
     number_sections: yes
     toc: yes
@@ -16,7 +18,7 @@ output:
 # a cleaned-up version that follows the outline of the lecture, if not the detail
 
 #xx=read.table("clipboard",header=TRUE)
-xx=read.csv("/Users/sn0wfree/Dropbox/PhD(1st)/BST 215Quantitative Research Methods term 1/r code/attendSLIM.csv",header=TRUE)
+xx=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/attendSLIM.csv",header=TRUE)
 attach(xx)
 head(xx)
 

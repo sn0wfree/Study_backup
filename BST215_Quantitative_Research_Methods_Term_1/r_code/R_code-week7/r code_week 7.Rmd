@@ -1,12 +1,12 @@
 ---
-title: "Quantitative Research Methods: R_code_week 7"
+title: 'Quantitative Research Methods: R_code_week 7'
 author: "sn0wfree"
 date: "11/10/2016"
 output:
+  html_document:
+    toc: yes
   pdf_document:
     latex_engine: xelatex
-    toc: yes
-  html_document:
     toc: yes
 ---
 #Quantitative Research Methods:R_Code_week 7
@@ -19,7 +19,7 @@ output:
 #*coding==UTF8*
 #dataset=attendSLIM.xls
 #attendSLIM=read.table(pipe("pbpaste"),header=TRUE)
-attendSLIM=read.csv("/Users/sn0wfree/Desktop/attendSLIM.csv",header=TRUE)
+attendSLIM=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/R_code-week7/attendSLIM.csv",header=TRUE)
 head(attendSLIM)
 #attach(attend)
 #par(mfrow=c(4,4)) #outframe set to 4*4 

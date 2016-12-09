@@ -1,9 +1,11 @@
 ---
-title:  assignment 
-author:  sn0wfree 
-date:  11/16/2016 
-output: 
-  pdf_document: 
+title: "assignment"
+author: "sn0wfree"
+date: "11/16/2016"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
     fig_caption: yes
     latex_engine: xelatex
     number_sections: yes
@@ -23,22 +25,16 @@ func<-function(x){
     return(c(raw,n))
 }
 
-cores <- detectCores(logical = 0)#find the physical core number;logical = TRUE-> find the number of core with logical cores
-cl <- makeCluster(cores)#initial the cluster 
-registerDoParallel(cl)#engage the parallel computing with cl number of cores
+#cores <- detectCores(logical = 0)#find the physical core number;logical = TRUE-> find the number of core with logical cores
+#cl <- makeCluster(cores)#initial the cluster 
+#registerDoParallel(cl)#engage the parallel computing with cl number of cores
 
-
-
-#main function begin
-x <- foreach(x=1:1e4,.combine='rbind') %dopar% func(x)
+##main function begin
+#x <- foreach(x=1:1e4,.combine='rbind') %dopar% func(x)
 #x <- foreach(x=1:1e4,.combine='rbind') %do% func(x)
 #main function end
 
-
-
-
-
-stopCluster(cl)#stop cluster
+#stopCluster(cl)#stop cluster
 
 #multicore with logical:41.139;
 #multicore without logical:38.176;
