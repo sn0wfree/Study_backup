@@ -30,6 +30,18 @@ be valid to test H0: $\beta_1 + \beta_2 =1$?
 where $SSR_{R}$ is the sum of squared residuals obtained from the restricted model, 
 while $SSR_{R}$ is from the unrestricted model.
 
+### ansewer
+chi-sq distribution
+
+$y_{i}=\beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+\epsilon_{i}$
+$y_{i}=\beta_{0}+\beta_{1}x_{1}+\beta_{2}x_{2}+\epsilon_{i}$ with $\beta_{1}+\beta_{2}=1$
+=> $y_{i}=\beta_{0}+\beta_{1}x_{1}+(1-\beta_{1})x_{2}+\epsilon_{i}$
+$y_{i}-x_{2}=\beta_{0}+\beta_{1}(x_{1}-x_{2})+\epsilon_{i}$
+in lecture 3
+
+homoscedasity
+
+
 
 ## topic 2
 
@@ -37,21 +49,59 @@ while $SSR_{R}$ is from the unrestricted model.
 If W and LM are not valid, how can one modify them for the test? 
 What is your conclusion from the valid test?
 
+bootstrap lecture:h-test or white test
+
+
+```{r}
+pbp=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST169_Econometrics/Crousework_Project/pbp.csv")
+head(pbp)
+str(pbp)
+```
+
+
 ## topic 3
 
 3. Generate $y_{i}$ from the following model,
 
-\centerline{$y_i = \beta_0 + \beta_{1}*x_{1,i} +(1=\beta_{1})*x_{2,i} +\sqrt{x_{1,i}}*\epsilon_{1}$   (2)}
+\centerline{$y_i = \beta_0 + \beta_{1}*x_{1,i} +(1-\beta_{1})*x_{2,i} +\sqrt{x_{1,i}}*\epsilon_{1}$   (2)}
 
-where $x_{1,i}$ follows chi-squared distribution with 2 degrees of freedom. 
-Generate $\epsilon_{1}$ from student t distribution with 6 degrees of freedom and $x_{2,i}~U(0,10)$. Check whether $W$, $LM$ and $LR$ in Question 1 follow chi-squared distribution by Monte Carlo.(The R command ks.test( ,’pchisq’,2) can be used.) 
+where $x_{1,i}$ follows chi-squared distribution with **2** degrees of freedom. 
+Generate $\epsilon_{1}$ from student t distribution with 6 degrees of freedom and $x_{2,i}$~$U(0,10)$. Check whether Wald, LR and LM in Question 1 follow chi-squared distribution by Monte Carlo.(The R command: ks.test( ,’pchisq’,2) can be used.) 
 If W and LM are not valid, calculate the correct test statistics and also verify them by Monte Carlo. Please consider different sample sizes.
+
+### lecture Monte Carlo
+from mc1.r mc2.r
+
+lecture Monte Carlo
+
+sample size; estimation:power of test
+
 
 ## topic 4
 
-Compare the size of di↵erent test statistics (frequencies of making Type 1 error) from Monte Carlo using 5% level of significance for different sample sizes. Explain the results.
+Compare the size of different test statistics (frequencies of making Type 1 error) from Monte Carlo using 5% level of significance for different sample sizes. Explain the results.
 
 ## topic 5
 
 For the data set pbp.csv, suppose Equation (2) is the true model. Use proper bootstrapped errors from the true model to study whether different test statistics for H0 :  $\beta_{1} + \beta_{2} = 1$ in the previous questions follow chi-squared distribution. Explain your results.
+
+
+------------
+reject null, make type I error
+
+
+bootstrap, 
+
+homoscedacity
+two types of bootstrap
+robust test
+bootstrap for $\epsilon_{i}$
+different performance
+----------
+t-distribution ^2 => F distribution
+single $\beta$->t-test
+
+$y_{i}=\beta_{0}+\beta_{1}(x_{1}-x_{2})+\theta x_{2}+\epsilon_{i}$
+$H_0:\theta=\beta_{1}+\beta_{2}$
+use t test for $\theta$ is as same with f-test with $\beta_{1}$,$\beta_{2}$ 
 

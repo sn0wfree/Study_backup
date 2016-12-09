@@ -10,6 +10,44 @@ output:
     toc: yes
 ---
 
+```{r initialization parallelization}
+library(foreach)
+library(doParallel)
+func<-function(x){
+  n = 1
+    raw <- x
+    while (x > 1) {
+        x <- ifelse(x%%2==0,x/2,3*x+1)
+        n = n + 1
+    }
+    return(c(raw,n))
+}
+
+cores <- detectCores(logical = 0)#find the physical core number;logical = TRUE-> find the number of core with logical cores
+cl <- makeCluster(cores)#initial the cluster 
+registerDoParallel(cl)#engage the parallel computing with cl number of cores
+
+
+
+#main function begin
+x <- foreach(x=1:1e4,.combine='rbind') %dopar% func(x)
+#x <- foreach(x=1:1e4,.combine='rbind') %do% func(x)
+#main function end
+
+
+
+
+
+stopCluster(cl)#stop cluster
+
+#multicore with logical:41.139;
+#multicore without logical:38.176;
+#single core:61.641
+```
+
+
+
+
 ```{r import_data}
 #assig<-read.csv( "States facts.csv" ,header=TRUE)
 all<-read.csv( "all.csv" ,header=1)
@@ -18,6 +56,7 @@ head(all)
 variables_name<-variable.names(all)
 colnames(all)
 variables_name
+str(all)
 ``` 
 
 
@@ -25,9 +64,10 @@ variables_name
 
 
 ```{r}
+#plot(all)
 #internet user ~ population + povety rate
-summary(lm(log(all$IntUse2010)~log(all$Pop2010)+all$PovRate1))
-cor.test(all$IntUse2010,all$PovRate1)
+summary(lm(all$intuse2010~all$pop2010+all$povrate1))
+cor.test(all$intuse2010,all$povrate1)
 #murd rate ~ + population densitiy +%100kinJail + Unemployment.Rates
 summary((lm(all$murd.pop2010x~all$Densitym2+all$NJailper100k+all$Unemployment.Rates)))
 #poverty rate ~ population densitiy + %High school graduate +Unemployment.Rates
@@ -56,4 +96,5 @@ colnames(cor_table_for_all)
 for(n in colnames(cor_table_for_all))
   {ifelse(cor_table_for_all[n]>=0.2,print(n),ifelse(cor_table_for_all[n]<=-0.2,print(n),NA))}
 ```
+
 
