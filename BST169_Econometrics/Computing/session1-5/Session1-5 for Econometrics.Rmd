@@ -3,12 +3,12 @@ title: "Session1-5 for Econometrics"
 author: "sn0wfree"
 date: "11/12/2016"
 output:
+  html_document:
+    theme: readable
+    toc: yes
   pdf_document:
     latex_engine: xelatex
     number_sections: yes
-    toc: yes
-  html_document:
-    theme: readable
     toc: yes
 ---
 
@@ -136,7 +136,7 @@ the dataframe is the most important function for data mining and data analysis, 
 use ```setwd()``` fucntion to set up the working directory, that can help us more easy to import the data and
 #### set up working directory and import data 
 ```{r setwrkdir&importdata}
-setwd("/Users/sn0wfree/Dropbox/PhD(1st)/sn0wfree.github.io/BST169_Econometrics/computing/session1-5")#setup the working directory
+setwd("/Users/sn0wfree/Dropbox/PhD_1st_study/BST169_Econometrics/Computing/session1-5")#setup the working directory
 london<-read.csv('london.csv')# import data from london.csv
 class(london)
 typeof(london)
@@ -192,7 +192,7 @@ is.na(london$wcloth[1:20])
 
 **2rd: use auto way to seek the missing data**
 ```{r  Answer to Question 1:scan_the_missing_data:Auto}
-setwd("/Users/sn0wfree/Dropbox/PhD(1st)/sn0wfree.github.io/BST169_Econometrics/computing/session1-5")#setup the working directory
+setwd("/Users/sn0wfree/Dropbox/PhD_1st_study/BST169_Econometrics/Computing/session1-5")#setup the working directory
 london<-read.csv('london.csv')# import data from london.csv
 
 compare_missing_data_function<-function(symbol){
