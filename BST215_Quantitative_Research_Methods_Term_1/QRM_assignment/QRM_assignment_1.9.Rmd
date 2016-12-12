@@ -33,17 +33,17 @@ rownames(crowdfunding)<-crowdfunding$State
 2. factors:studying the relationship between Successful Rate and other factors:
   + Higher Eduction:pAdDeg;
   + Ginicoeff
-  + average_pledged_amount_of_Grand.Total
+  # average_pledged_amount_of_Grand.Total#
 
 
-### 3. total regression
+### 3. Total regression
 ```{r regression}
 
 successful.rate2GiniCoeff<-lm(crowdfunding$successful.rate~crowdfunding$GiniCoeff)#significant:0.00398
 summary(successful.rate2GiniCoeff)
 
-successful.rate2PovRate1<-lm(crowdfunding$successful.rate~crowdfunding$PovRate1)#0.231
-summary(successful.rate2PovRate1)
+successful.rate2NPov000s<-lm(crowdfunding$successful.rate~crowdfunding$NPov000s)#0.231
+summary(successful.rate2NPov000s)
 
 summary(lm(crowdfunding$successful.rate~crowdfunding$pHigh))#bad:0.2320 
 summary(lm(crowdfunding$successful.rate~crowdfunding$pBatDeg))#low:0.05511
@@ -54,13 +54,16 @@ summary(successful.rate2pAdDeg)
 #supplement regression
 summary(lm(crowdfunding$GiniCoeff~crowdfunding$pAdDeg))#significant:0.0353
 
-summary(lm(successful.rate2PovRate1$residuals~crowdfunding$pAdDeg))#0.0003881
-summary(lm(successful.rate2PovRate1$residuals~crowdfunding$GiniCoeff))#0.0264
+
+summary(lm(crowdfunding$count_of_Grand.Total~crowdfunding$Pop2010))#significant:0.0353
+
+#summary(lm(successful.rate2PovRate1$residuals~crowdfunding$pAdDeg))#0.0003881
+#summary(lm(successful.rate2PovRate1$residuals~crowdfunding$GiniCoeff))#0.0264
 
 summary(lm(successful.rate2GiniCoeff$residuals~crowdfunding$pAdDeg))#residuals ~ ADdeg:0.0368
-summary(lm(successful.rate2GiniCoeff$residuals~crowdfunding$PovRate1))#residuals ~ PovRate1:0.771
+#summary(lm(successful.rate2GiniCoeff$residuals~crowdfunding$PovRate1))#residuals ~ PovRate1:0.771
 
-summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$PovRate1))#0.004505
+#summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$PovRate1))#0.004505
 summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$GiniCoeff))#0.0295
 
 
@@ -72,38 +75,85 @@ summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$GiniCoeff))#0.0295
 ## Geography information
 
 
-### Geography information-barplot or lineplot
-```{r Geography information-barplot/lineplot}
-par(mfrow=c(1,2) )
-#barplot(crowdfunding$count_of_Grand.Total,names.arg = crowdfunding$State,col="skyblue")
-barplot(crowdfunding$count_of_Grand.Total,col="orange",axes = 0,xlab = "State",,ylab="Count of Projects",main="Count of Projects by States")
-barplot(crowdfunding$successful.rate,col="skyblue",axes  = 0,xlab = "State",main="Successful Rate by States",ylab="Successful Rate")
+
+### Geography information-preprocess:kmean
+
+```{r kmeans}
+hc<-hclust(dist(crowdfunding),method = "ward.D", members = NULL)
+plclust(hc)
+rect.hclust(hc,k=4)
+
+
+heatmap(as.matrix(dist(crowdfunding,method= 'euclidean')),labRow = F, labCol = F)
+result<-cutree(hc,k=4)
+result.category<-as.data.frame(result)
+colnames(result.category)<-c("MDS_Category")
+result.category
+pie(result)
+barplot(result,col =result )
+#table(result)
+#summary(result)
+plot(result,type = "p",col=result,xlab="State",xaxt="n",ylab="MDS_Category")
+
+
+library(ggplot2)
+mds2 <- -cmdscale(dist(crowdfunding))
+plot(mds2, type="n", axes=FALSE, ann=FALSE)
+text(mds2, labels=rownames(mds2), xpd = NA)
+
+mds<-cmdscale(dist(crowdfunding),k=4,eig=T)
+x = mds$points[,1]
+y = mds$points[,2]
+p=ggplot(data.frame(x,y),aes(x,y))
+p+geom_point(size=5 , alpha=0.8 , aes(colour=factor(result) ))
+k2<-kmeans(all,centers=5,nstart=10)
+summary(k2)
+#-------------------------------
+crowdfunding.backup<-crowdfunding
+
+result.category["State"]<-row.names(result.category)
+
+crowdfunding<-crowdfunding[c("State","successful.rate","Region","count_of_Grand.Total","GiniCoeff","pAdDeg","pHigh","pBatDeg","Pop2010")]
+crowdfunding$Pop2010<-log(crowdfunding$Pop2010)
+#crowdfunding$count_of_Grand.Total<-log(crowdfunding$count_of_Grand.Total)
+crowdfunding<-merge(crowdfunding,result.category,all.x=TRUE)
+row.names(crowdfunding)<-crowdfunding$State
+
+crowdfunding$State<-NULL
+crowdfunding
+  
 ```
 
 
-### Geography information-simpleplot
-```{r Geography information-simpleplot}
+
+
+
+
+### Geography Information-simpleplot
+```{r Geography Information-simpleplot}
 par(mfrow=c(1,2) )
 
 #count_of_Grand.Total
 plot(crowdfunding$count_of_Grand.Total,col=crowdfunding$Region, main="Count of Project  Plot",ylab="Successful Rate",xaxt="n",xlab="State")
 #axis(side=1,at=c(1,2,3,4,5,6,7,8),labels=c(crowdfunding$State))
-legend("center",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:3)
+legend("center",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:4)
 
 
 
 #successful.rate
 plot(crowdfunding$successful.rate,col=crowdfunding$Region, main="Successful Rate Plot",ylab="Successful Rate",xaxt="n",xlab="State")
 #axis(side=1,at=c(1,2,3,4,5,6,7,8),labels=c(crowdfunding$State))
-legend("bottomleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:3)
+legend("bottomleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:4)
 ```
 
 ### Geography information-boxplot
 ```{r Geography information-boxplot}
-par(mfrow=c(1,2))
+par(mfrow=c(1,3))
 #Boxplot for successful.rate and count_of_Grand.Total
 #count_of_Grand.Total
-boxplot(log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"]),names=levels(crowdfunding$Region),main="Count of Projects BoxPlot by Region")
+boxplot(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],names=levels(crowdfunding$Region),main="Count of Projects BoxPlot by Region")
+
+boxplot(log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"]),names=levels(crowdfunding$Region),main="Log Count of Projects BoxPlot by Region")
 
 #successful.rate
 boxplot(crowdfunding$successful.rate[crowdfunding$Region=="Midwest"],crowdfunding$successful.rate[crowdfunding$Region=="Northeast"],crowdfunding$successful.rate[crowdfunding$Region=="South"],crowdfunding$successful.rate[crowdfunding$Region=="West"],names=levels(crowdfunding$Region),main="Successful Rate BoxPlot by Region")
@@ -150,7 +200,23 @@ colnames(CP.t.test.p.vlaue)<-c(levels(crowdfunding$Region))
 print("Count of Projects by Region ")
 CP.t.test.p.vlaue
 #--------------------------------------------------------
+#calcualte P Value in the t.test of Count of projects by kmeans 
+"MDS-Category"
+p=NULL
 
+temp<-NULL
+for (location1 in 1:4){
+  for (location2 in 1:4){
+    if (1){
+      temp<-t.test(crowdfunding$successful.rate[crowdfunding$MDS_Category==location1],crowdfunding$successful.rate[crowdfunding$MDS_Category==location2])
+      if(temp$p.value<=0.1){
+        print(c(location1,location2,temp$p.value))
+      }
+      p<-c(p,temp$p.value)}}}
+MDSR.t.test.p.vlaue<-as.data.frame(matrix(p,4,4),row.names = c(1:4))
+colnames(MDSR.t.test.p.vlaue)<-c(1:4)
+print("Successful Rate by Region")
+MDSR.t.test.p.vlaue
 
 
 ```
@@ -183,47 +249,17 @@ kurtosis(crowdfunding$PovRate1)
 
 boxplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,crowdfunding$pAdDeg,crowdfunding$PovRate1,names = c("Successful Rate","GiniCoeff","Higher Education","PovRate1"),main="Factors Box Plot")
 
-par(mfrow=c(2,2))
+par(mfrow=c(1,3))
 plot(crowdfunding$successful.rate,col="red",pch=10,xlab="State",ylab="Successful Rate",xaxt="n",main="Successful Rate Plot")
 plot(crowdfunding$GiniCoeff,col="green",pch=18,xlab="State",xaxt="n",ylab="GiniCoeff ",xaxt="n",main="GiniCoeff Plot")
 plot(crowdfunding$pAdDeg,col="blue",pch=15,xlab="State",xaxt="n",ylab="Adanced Education Rate",xaxt="n",main="Adanced Education Rate Plot")
-plot(crowdfunding$PovRate1,col="black",pch=16,xlab="State",xaxt="n",ylab="Poverty Rate",xaxt="n",main="Poverty Rate Plot")
+#plot(crowdfunding$PovRate1,col="black",pch=16,xlab="State",xaxt="n",ylab="Poverty Rate",xaxt="n",main="Poverty Rate Plot")
 
 ```
 
 
 
 
-```{r kmeans}
-hc<-hclust(dist(crowdfunding),method = "ward.D", members = NULL)
-plclust(hc)
-rect.hclust(hc,k=3)
-
-
-heatmap(as.matrix(dist(crowdfunding,method= 'euclidean')),labRow = F, labCol = F)
-result<-cutree(hc,k=3)
-as.data.frame(result)
-pie(result)
-barplot(result,col = "blue")
-#table(result)
-#summary(result)
-plot(result,type = "p")
-
-
-library(ggplot2)
-mds2 <- -cmdscale(dist(crowdfunding))
-plot(mds2, type="n", axes=FALSE, ann=FALSE)
-text(mds2, labels=rownames(mds2), xpd = NA)
-
-mds<-cmdscale(dist(crowdfunding),k=3,eig=T)
-x = mds$points[,1]
-y = mds$points[,2]
-p=ggplot(data.frame(x,y),aes(x,y))
-p+geom_point(size=5 , alpha=0.8 , aes(colour=factor(result) ))
-k2<-kmeans(all,centers=5,nstart=10)
-summary(k2)
-
-```
 
 ```{r scatterplot}
 library(car)
@@ -259,14 +295,14 @@ t.test(crowdfunding$successful.rate[crowdfunding$PovRate1>mean(crowdfunding$PovR
 
 
 
-plot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=19,col=crowdfunding$Region,xlab="Successful Rate",ylab="PovRate1",main="Successful Rate-PovRate1 Plot with lowess line")
-points(lowess(crowdfunding$successful.rate,crowdfunding$PovRate1,f=1/3),pch=4,col="orange",type="l")
+plot(crowdfunding$PovRate1,crowdfunding$successful.rate,pch=19,col=crowdfunding$Region,ylab="Successful Rate",xlab="PovRate1",main="Successful Rate-PovRate1 Plot with lowess line")
+points(lowess(crowdfunding$PovRate1,crowdfunding$successful.rate,f=1/3),pch=4,col="orange",type="l")
 #abline(lm(crowdfunding$successful.rate~crowdfunding$PovRate1),col="orange")
-legend("topleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 19,col=1:3)
+legend("bottomright",legend = levels(crowdfunding$Region),cex = 0.8, pch = 19,col=1:4)
 
 
-qqplot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=1,col=crowdfunding$Region,main="QQ plot: (Successful Rate & PovRate)")
-qqline(crowdfunding$successful.rate,crowdfunding$PovRate1,col="red")
+qqplot(crowdfunding$PovRate1,crowdfunding$successful.rate,pch=1,col=crowdfunding$Region,main="QQ plot: (Successful Rate & PovRate)")
+qqline(crowdfunding$PovRate1 ,crowdfunding$successful.rate,col="red")
 legend("topleft",legend = levels(crowdfunding$Region), pch = 19,col=1:3)
 
 
