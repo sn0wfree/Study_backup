@@ -3,9 +3,11 @@ title: "Assignment"
 author: "sn0wfree"
 date: "12/16/2016"
 output:
+  html_notebook:
+    toc: yes
   html_document:
     toc: yes
-  html_notebook:
+  pdf_document:
     toc: yes
 ---
 
@@ -22,11 +24,11 @@ rownames(crowdfunding)<-crowdfunding$State
 ### 1.Geography information
 
 1. Geography information:found the significally different by state/by region
-  + amount
+  + Amount
   + successfull rate
   within graphy/plot
   
-### 2. Factors:
+### 2. Factors analysis:
   
 2. factors:studying the relationship between Successful Rate and other factors:
   + Higher Eduction:pAdDeg;
@@ -34,24 +36,35 @@ rownames(crowdfunding)<-crowdfunding$State
   + average_pledged_amount_of_Grand.Total
 
 
-### total regression
-
+### 3. total regression
 ```{r regression}
-summary(lm(crowdfunding$successful.rate~crowdfunding$GiniCoeff))#significant:0.00398
-summary(lm(crowdfunding$successful.rate~crowdfunding$PovRate1))#0.231
-summary(lm(crowdfunding$successful.rate~crowdfunding$Densitym2))# 0.109
+
+successful.rate2GiniCoeff<-lm(crowdfunding$successful.rate~crowdfunding$GiniCoeff)#significant:0.00398
+summary(successful.rate2GiniCoeff)
+
+successful.rate2PovRate1<-lm(crowdfunding$successful.rate~crowdfunding$PovRate1)#0.231
+summary(successful.rate2PovRate1)
+
 summary(lm(crowdfunding$successful.rate~crowdfunding$pHigh))#bad:0.2320 
 summary(lm(crowdfunding$successful.rate~crowdfunding$pBatDeg))#low:0.05511
-summary(lm(crowdfunding$successful.rate~crowdfunding$pAdDeg))#significant:0.00501
-summary(lm(crowdfunding$successful.rate~log(crowdfunding$average_of_goal_Grand.Total)))#bad:0.687
-summary(lm(crowdfunding$successful.rate~log(crowdfunding$average_pledged_amount_of_Grand.Total)))#3.32e-06
 
+successful.rate2pAdDeg<-lm(crowdfunding$successful.rate~crowdfunding$pAdDeg)#significant:0.00501
+summary(successful.rate2pAdDeg)
 
+#supplement regression
 summary(lm(crowdfunding$GiniCoeff~crowdfunding$pAdDeg))#significant:0.0353
 
-summary(lm(lm(crowdfunding$successful.rate~crowdfunding$GiniCoeff)$residuals~crowdfunding$pAdDeg))#residuals ~ ADdeg:0.0368
+summary(lm(successful.rate2PovRate1$residuals~crowdfunding$pAdDeg))#0.0003881
+summary(lm(successful.rate2PovRate1$residuals~crowdfunding$GiniCoeff))#0.0264
 
-summary(lm(log(crowdfunding$average_pledged_amount_of_Grand.Total)~crowdfunding$GiniCoeff))#0.02357
+summary(lm(successful.rate2GiniCoeff$residuals~crowdfunding$pAdDeg))#residuals ~ ADdeg:0.0368
+summary(lm(successful.rate2GiniCoeff$residuals~crowdfunding$PovRate1))#residuals ~ PovRate1:0.771
+
+summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$PovRate1))#0.004505
+summary(lm(successful.rate2pAdDeg$residuals~crowdfunding$GiniCoeff))#0.0295
+
+
+#summary(lm(log(crowdfunding$average_pledged_amount_of_Grand.Total)~crowdfunding$GiniCoeff))#0.02357
 
 
 ```
@@ -83,9 +96,6 @@ legend("center",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:3)
 plot(crowdfunding$successful.rate,col=crowdfunding$Region, main="Successful Rate Plot",ylab="Successful Rate",xaxt="n",xlab="State")
 #axis(side=1,at=c(1,2,3,4,5,6,7,8),labels=c(crowdfunding$State))
 legend("bottomleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:3)
-
-
-
 ```
 
 ### Geography information-boxplot
@@ -97,11 +107,6 @@ boxplot(log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"]),l
 
 #successful.rate
 boxplot(crowdfunding$successful.rate[crowdfunding$Region=="Midwest"],crowdfunding$successful.rate[crowdfunding$Region=="Northeast"],crowdfunding$successful.rate[crowdfunding$Region=="South"],crowdfunding$successful.rate[crowdfunding$Region=="West"],names=levels(crowdfunding$Region),main="Successful Rate BoxPlot by Region")
-
-
-
-
-
 ```
 
 
@@ -150,10 +155,39 @@ CP.t.test.p.vlaue
 
 ```
 
+## Factors analysis
+This article is to analyse the factors to the crowdfunding successful rate.
+I guess the Education, the inequity of family income and the poverty rate may be related to the crowdfunding successful rate. and in the follow context, i will analyse the those factors.
 
-```{r boxplot for variables}
+Firstly, The Statistical Summary
+### Factors Analysis-Statistical Summary
+```{r Factors Analysis-Statistical Summary}
+library(moments)
 
-boxplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,crowdfunding$pAdDeg,log(crowdfunding$average_pledged_amount_of_Grand.Total),names = c("Successful Rate","GiniCoeff","Higher Education","Average Pledged Amount"),col="skyblue")
+summary(crowdfunding$successful.rate)
+kurtosis(crowdfunding$successful.rate)
+
+summary(crowdfunding$GiniCoeff)
+kurtosis(crowdfunding$GiniCoeff)
+
+summary(crowdfunding$pAdDeg)
+kurtosis(crowdfunding$pAdDeg)
+
+summary(crowdfunding$PovRate1)
+kurtosis(crowdfunding$PovRate1)
+
+```
+
+### Factors Analysis-Plot for Factors
+```{r Plot for Factors}
+
+boxplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,crowdfunding$pAdDeg,crowdfunding$PovRate1,names = c("Successful Rate","GiniCoeff","Higher Education","PovRate1"),main="Factors Box Plot")
+
+par(mfrow=c(2,2))
+plot(crowdfunding$successful.rate,col="red",pch=10,xlab="State",ylab="Successful Rate",xaxt="n",main="Successful Rate Plot")
+plot(crowdfunding$GiniCoeff,col="green",pch=18,xlab="State",xaxt="n",ylab="GiniCoeff ",xaxt="n",main="GiniCoeff Plot")
+plot(crowdfunding$pAdDeg,col="blue",pch=15,xlab="State",xaxt="n",ylab="Adanced Education Rate",xaxt="n",main="Adanced Education Rate Plot")
+plot(crowdfunding$PovRate1,col="black",pch=16,xlab="State",xaxt="n",ylab="Poverty Rate",xaxt="n",main="Poverty Rate Plot")
 
 ```
 
@@ -164,8 +198,6 @@ boxplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,crowdfunding$pAdDeg,
 hc<-hclust(dist(crowdfunding),method = "ward.D", members = NULL)
 plclust(hc)
 rect.hclust(hc,k=3)
-
-
 
 
 heatmap(as.matrix(dist(crowdfunding,method= 'euclidean')),labRow = F, labCol = F)
@@ -193,14 +225,6 @@ summary(k2)
 
 ```
 
-
-
-
-
-
-
-
-
 ```{r scatterplot}
 library(car)
 scatterplot(crowdfunding$successful.rate,log(crowdfunding$average_of_goal_Grand.Total),pch=19)
@@ -214,36 +238,44 @@ scatterplot(crowdfunding$successful.rate~crowdfunding$pAdDeg,pch=19)
 
 ```
 
-```{r rate-PovRate1}
 
-
+### Factors Analysis-Successful Rate|PovRate1
+```{r Successful Rate-PovRate1}
 #redo scatterplot with Successful Rate-PovRate1
 scatterplot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=19)
 
+anova(successful.rate2PovRate1)
+
+ggplot(crowdfunding,aes(x=PovRate1,y=successful.rate,main = "Successful rate~PovRate"))+geom_point(aes(col=Region))+geom_smooth(method = "loess")
+
+par(mfrow=c(1,2))
+
 boxplot(crowdfunding$successful.rate,crowdfunding$PovRate1,names=c("Successful Rate","PovRate1"))
-
-ggplot(crowdfunding,aes(x=successful.rate,y=PovRate1,main = "Successful rate~PovRate"))+geom_point(aes(col=Region))+geom_smooth(method = "loess")
-
 boxplot(crowdfunding$successful.rate[crowdfunding$PovRate1>mean(crowdfunding$PovRate1)],crowdfunding$successful.rate[crowdfunding$PovRate1<=mean(crowdfunding$PovRate1)],col = c("green","deepskyblue"),names=c("Successful%(High PovRate)","Successful%(Low PovRate)"),xlab="Successful rate by PovRate1")
 
 
 
 t.test(crowdfunding$successful.rate[crowdfunding$PovRate1>mean(crowdfunding$PovRate1)],crowdfunding$successful.rate[crowdfunding$PovRate1<=mean(crowdfunding$PovRate1)])
 
-par(mfrow=c(1,2))
 
-plot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=16,col=crowdfunding$Region,xlab="Successful Rate",ylab="PovRate1",main="Successful Rate-PovRate1 Plot with lowess line")
-points(lowess(crowdfunding$successful.rate,crowdfunding$PovRate1,f=1/3),pch=4,col="blue",type="l")
+
+plot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=19,col=crowdfunding$Region,xlab="Successful Rate",ylab="PovRate1",main="Successful Rate-PovRate1 Plot with lowess line")
+points(lowess(crowdfunding$successful.rate,crowdfunding$PovRate1,f=1/3),pch=4,col="orange",type="l")
 #abline(lm(crowdfunding$successful.rate~crowdfunding$PovRate1),col="orange")
-
-qqplot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=13,col="orange",main="QQ plot: (Successful Rate & PovRate)",)
-
+legend("topleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 19,col=1:3)
 
 
+qqplot(crowdfunding$successful.rate,crowdfunding$PovRate1,pch=1,col=crowdfunding$Region,main="QQ plot: (Successful Rate & PovRate)")
+qqline(crowdfunding$successful.rate,crowdfunding$PovRate1,col="red")
+legend("topleft",legend = levels(crowdfunding$Region), pch = 19,col=1:3)
 
-qqnorm(crowdfunding$successful.rate,col="orange",xlab="Successful Rate")
-qqline(crowdfunding$successful.rate,col="red")
-qqnorm(crowdfunding$PovRate1,col="deepskyblue",pch=18,xlab ="PovRate1")
+
+
+
+par(mfrow=c(1,1))
+#qqnorm(crowdfunding$successful.rate,col=crowdfunding$Region,xlab="Successful Rate")
+#qqline(crowdfunding$successful.rate,col="red")
+qqnorm(crowdfunding$PovRate1,col=crowdfunding$Region,pch=18,xlab ="PovRate1")
 qqline(crowdfunding$PovRate1,col="red")
 ```
 
@@ -251,11 +283,19 @@ qqline(crowdfunding$PovRate1,col="red")
 
 
 
+### Factors Analysis-Successful Rate|GiniCoeff
+```{r Successful Rate-GiniCoeff}
 
-```{r rate-Ginicoef}
+ggplot(crowdfunding,aes(x=GiniCoeff,y=successful.rate,main = "Successful rate~GiniCoeff"))+geom_point(aes(col=Region))+geom_smooth(method = "loess")
 
-ggplot(crowdfunding,aes(x=successful.rate,y=GiniCoeff,main = "Successful rate~GiniCoeff"))+geom_point(aes(col=Region))+geom_smooth(method = "loess")
+anova(successful.rate2GiniCoeff)
 
+
+
+par(mfrow=c(1,2))
+
+
+boxplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,names=c("Successful rate","GiniCoeff"))
 boxplot(crowdfunding$successful.rate[crowdfunding$GiniCoeff>mean(crowdfunding$GiniCoeff)],crowdfunding$successful.rate[crowdfunding$GiniCoeff<=mean(crowdfunding$GiniCoeff)],col = c("darkorchid2","dodgerblue"),names=c("Successful%(High GiniCoeff)","Successful%(Low GiniCoeff)"),xlab="Successful rate by GiniCoeff")
 
 
@@ -264,17 +304,18 @@ boxplot(crowdfunding$successful.rate[crowdfunding$GiniCoeff>mean(crowdfunding$Gi
 
 t.test(crowdfunding$successful.rate[crowdfunding$GiniCoeff>mean(crowdfunding$GiniCoeff)],crowdfunding$successful.rate[crowdfunding$GiniCoeff<=mean(crowdfunding$GiniCoeff)])
 
-par(mfrow=c(1,2))
+
 plot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,f=1/3 ,pch=19,col="blue",xlab="Successful Rate",ylab="GiniCoeff",main="Successful Rate-GiniCoeff Plot with lowess line")
 points(lowess(crowdfunding$successful.rate,crowdfunding$GiniCoeff,f=1/3),pch=4,col="red",type="l")
 
 
 qqplot(crowdfunding$successful.rate,crowdfunding$GiniCoeff,pch=19,col="red",main="Q-Q Plot: Successful Rate-GiniCoeff")
+qqline(crowdfunding$successful.rate,crowdfunding$GiniCoeff)
 
 
-qqnorm(crowdfunding$successful.rate,col="orange",xlab="Successful Rate")
-qqline(crowdfunding$successful.rate,col="red")
-
+#qqnorm(crowdfunding$successful.rate,col="orange",xlab="Successful Rate")
+#qqline(crowdfunding$successful.rate,col="red")
+par(mfrow=c(1,1))
 qqnorm(crowdfunding$GiniCoeff,col="blue",pch=20,xlab="GiniCoeff")
 qqline(crowdfunding$GiniCoeff,col="red")
 
@@ -282,6 +323,34 @@ qqline(crowdfunding$GiniCoeff,col="red")
 
 
 
+### Factors Analysis-Successful Rate|Adanced Education
+```{r Successful Rate-Adanced Education}
+ggplot(crowdfunding,aes(x=pAdDeg,y=successful.rate,main = "Successful rate~GiniCoeff"))+geom_point(aes(col=Region))+geom_smooth(method = "loess")
+
+anova(successful.rate2pAdDeg)
+
+par(mfrow=c(1,2))
+
+boxplot(crowdfunding$successful.rate,crowdfunding$pAdDeg,names=c("Successful rate","Adanced Education"))
+boxplot(crowdfunding$successful.rate[crowdfunding$pAdDeg>mean(crowdfunding$pAdDeg)],crowdfunding$successful.rate[crowdfunding$pAdDeg<=mean(crowdfunding$pAdDeg)],col = c("darkorchid2","dodgerblue"),names=c("Successful%(High Adanced Education)","Successful%(Low Adanced Education)"),xlab="Successful rate by Adanced Education")
 
 
+t.test(crowdfunding$successful.rate[crowdfunding$pAdDeg>mean(crowdfunding$pAdDeg)],crowdfunding$successful.rate[crowdfunding$pAdDeg<=mean(crowdfunding$pAdDeg)])
+
+
+plot(crowdfunding$successful.rate,crowdfunding$pAdDeg,f=1/3 ,pch=19,col="blue",xlab="Successful Rate",ylab="Adanced Education",main="Successful Rate-Adanced Education Plot with lowess line")
+points(lowess(crowdfunding$successful.rate,crowdfunding$pAdDeg,f=1/3),pch=4,col="red",type="l")
+
+
+qqplot(crowdfunding$successful.rate,crowdfunding$pAdDeg,pch=19,col="red",main="Q-Q Plot: Successful Rate-Adanced Education")
+qqline(crowdfunding$successful.rate,crowdfunding$pAdDeg)
+
+
+#qqnorm(crowdfunding$successful.rate,col="orange",xlab="Successful Rate")
+#qqline(crowdfunding$successful.rate,col="red")
+par(mfrow=c(1,1))
+qqnorm(crowdfunding$pAdDeg,col="blue",pch=20,xlab="Adanced Education")
+qqline(crowdfunding$pAdDeg,col="red")
+
+```
 
