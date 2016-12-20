@@ -2,7 +2,7 @@
     "TabSet1" : 0,
     "TabSet2" : 1,
     "TabZoom" : {
-        "MaximizedTab" : "Source",
-        "WidgetSize" : 508.5882352941176
+        "MaximizedTab" : "Plots",
+        "WidgetSize" : 538
     }
 }

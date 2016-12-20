@@ -1,6 +1,7 @@
 #*coding=UTF8*#
 #--------------
-"""this py is for Quantitative Research Methods
+"""
+this py is for Quantitative Research Methods
 which I have given up by using R to programme something, that is terrible progamme langauge
 """
 __version__=0.1
@@ -76,8 +77,6 @@ def return_maxpvlaue_and_label(res_temp):
 
     res_var=res_temp.pvalues.to_frame().index
     res_r2=res_temp.rsquared
-
-
     res_params=res_temp.params
     top_pvalue=0
     varname="NA"
@@ -132,11 +131,6 @@ if __name__ == '__main__':
         print (key,round(top_pvalue,4),varname,round(res_r2,4))
         print res_temp.summary()
 
-
-
-
-
-
         #res_pvlaue=res_temp.pvalues.to_frame()
         #print res_data
         goodvar_dict={}
@@ -144,10 +138,6 @@ if __name__ == '__main__':
         #for p_label in res_data.index:
         #    if p_label != "Intercept":
         #        goodvar_dict[res_data[0][p_label]]=p_label
-
-
-
-
 
         #print goodvar_list
         #if goodvar_list!={}:
