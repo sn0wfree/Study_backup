@@ -14,7 +14,8 @@ output:
 
 ## Import Data
 ```{r import date}
-crowdfunding<-read.csv( "forqrm3.csv" ,header=1)
+crowdfunding<-read.csv( "forqrm.csv" ,header=1)
+crowdfunding_region<-read.csv( "forqrm.csv" ,header=1)
 head(crowdfunding)
 library(lmtest)
 
@@ -38,6 +39,10 @@ se
   + Higher Eduction:pAdDeg;
   + Ginicoeff
   # average_pledged_amount_of_Grand.Total#
+```{r pie}
+pie(table(crowdfunding_region$Region))
+barplot(count(crowdfunding_region$successful_rate))
+```
 
 
 ### 3.Total regression
@@ -176,12 +181,49 @@ legend("topleft",legend = levels(crowdfunding$Region),cex = 0.8, pch = 1,col=1:4
 par(mfrow=c(1,3))
 #Boxplot for successful_rate and count_of_Grand.Total
 #count_of_Grand.Total
-boxplot(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],names=levels(crowdfunding$Region),main="Count of Projects BoxPlot by Region",varwidth=TRUE)
+boxplot(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"],
+        crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"],
+        crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"],
+        crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],
+        names=levels(crowdfunding$Region),main="Count of Projects BoxPlot by Region",varwidth=TRUE)
 
-boxplot(log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"]),log(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"]),names=levels(crowdfunding$Region),main="Log Count of Projects BoxPlot by Region")
+
+skewness(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Midwest"])
+skewness(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Northeast"])
+skewness(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="South"])
+skewness(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="West"])
+
+kurtosis(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Midwest"])
+kurtosis(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Northeast"])
+kurtosis(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="South"])
+kurtosis(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="West"])
+
+
+boxplot(log(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Midwest"]),
+        log(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="Northeast"]),
+        log(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="South"]),
+        log(crowdfunding_region$count_of_Grand.Total[crowdfunding_region$Region=="West"]),
+        names=levels(crowdfunding$Region),main="Log Count of Projects BoxPlot by Region")
+
+
 
 #successful_rate
-boxplot(crowdfunding$successful_rate[crowdfunding$Region=="Midwest"],crowdfunding$successful_rate[crowdfunding$Region=="Northeast"],crowdfunding$successful_rate[crowdfunding$Region=="South"],crowdfunding$successful_rate[crowdfunding$Region=="West"],names=levels(crowdfunding$Region),main="Successful Rate BoxPlot by Region")
+boxplot(crowdfunding$successful_rate[crowdfunding$Region=="Midwest"],
+        crowdfunding$successful_rate[crowdfunding$Region=="Northeast"],
+        crowdfunding$successful_rate[crowdfunding$Region=="South"],
+        crowdfunding$successful_rate[crowdfunding$Region=="West"],
+        names=levels(crowdfunding$Region),main="Successful Rate BoxPlot by Region")
+
+skewness(crowdfunding_region$successful_rate[crowdfunding_region$Region=="Midwest"])
+skewness(crowdfunding_region$successful_rate[crowdfunding_region$Region=="Northeast"])
+skewness(crowdfunding_region$successful_rate[crowdfunding_region$Region=="South"])
+skewness(crowdfunding_region$successful_rate[crowdfunding_region$Region=="West"])
+
+
+kurtosis(crowdfunding_region$successful_rate[crowdfunding_region$Region=="Midwest"])
+kurtosis(crowdfunding_region$successful_rate[crowdfunding_region$Region=="Northeast"])
+kurtosis(crowdfunding_region$successful_rate[crowdfunding_region$Region=="South"])
+kurtosis(crowdfunding_region$successful_rate[crowdfunding_region$Region=="West"])
 
 
 par(mfrow=c(2,4))
@@ -198,10 +240,7 @@ qqline(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"])
 qqnorm(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],xlab="West",col="blue",xaxt="n",main="Count of Projects-Norm Q-Q Plot")
 qqline(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"])
 
- kurtosis(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Midwest"])
- kurtosis(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"])      
- kurtosis(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="South"])      
- kurtosis(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"]) 
+
 
 #successful_rate
 qqnorm(crowdfunding$successful_rate[crowdfunding$Region=="Midwest"],xlab="Midwest",col="black",xaxt="n",main="Successful Rate-Norm Q-Q Plot")
@@ -221,6 +260,19 @@ kurtosis(crowdfunding$successful_rate[crowdfunding$Region=="Northeast"])
 kurtosis(crowdfunding$successful_rate[crowdfunding$Region=="South"])      
 kurtosis(crowdfunding$successful_rate[crowdfunding$Region=="West"])      
 
+
+```
+```{r}
+par(mfrow=c(1,3))
+qqnorm(crowdfunding$successful_rate, main ="Successful rate:Q-Q norm",col="red")
+qqline(crowdfunding$successful_rate)
+qqnorm(crowdfunding$GiniCoeff, main ="GiniCoeff:Q-Q norm",col="blue")
+qqline(crowdfunding$GiniCoeff)
+qqnorm(crowdfunding$pAdDeg, main ="pAdDeg:Q-Q norm",col="green")
+qqline(crowdfunding$pAdDeg)
+
+cor.test(crowdfunding$successful_rate,crowdfunding$GiniCoeff)
+cor.test(crowdfunding$successful_rate,crowdfunding$pAdDeg,method="spearman")
 
 ```
 
@@ -639,7 +691,7 @@ ggplot(crowdfunding,aes(x=PovRate1,y=successful_rate,main = "Successful rate~Pov
 ```{r reset-Chow test}
 require(lmtest)
 require(strucchange)
-resettest(log(crowdfunding$successful_rate)~log(crowdfunding$GiniCoeff))
+resettest(crowdfunding$successful_rate~crowdfunding$GiniCoeff+(crowdfunding$GiniCoeff)^2)
 
 sctest(log(crowdfunding$successful_rate)~log(crowdfunding$GiniCoeff),type="Chow")
 
