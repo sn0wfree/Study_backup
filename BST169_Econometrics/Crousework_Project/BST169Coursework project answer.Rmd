@@ -118,8 +118,8 @@ equ2<-lm((y-x2)~(x1-x2), data=pbp)
 bptest(equ1)
 bptest(equ2)
 #White test
-bptest(residuals(equ1)~x1+x2+x1*x2+x1^2+x2^2,data=pbp)
-bptest(residuals(equ2)~(x1-x2)+(x1-x2)^2,data=pbp)
+bptest(residuals(equ1)^2~x1+x2+x1*x2+(x1)^2+(x2)^2,data=pbp)
+bptest(residuals(equ2)^2~(x1-x2)+(x1-x2)^2,data=pbp)
 
 ```
 
@@ -152,7 +152,7 @@ where
 
 \centerline{$\beta_{2}=1-\beta_{1}$}
 \centerline{$e_i=\sqrt{x_{1,i}}*\epsilon_{1}$}
-And I assume that $\beta_1 = 0.5$, $\beta_0=24$, and given a fixed value set $x_1$
+And I assume that $\beta_1 = 0.4$, $\beta_0=1$, and  a   set $x_1$
 
 
 
@@ -164,10 +164,11 @@ lecture Monte Carlo
 sample size; estimation:power of test
 ks.test(x,"pchisq",2)
 
-```{r Monte Carlo}
+```{r Monte Carlo:heter-uncorrected}
 require(lmtest)
 require(MASS)
 require(stats)
+require(nlme)
 ##boost up: translate programme language code into Byte-code.
 require(compiler)
 enableJIT(3)
@@ -179,23 +180,25 @@ loop=100
 
 beta_1=0.4
 beta_0=1
-x1_store=rchisq(80+20, 2)
+
+#x1_store=rchisq(80+20, 2)
 #initial valueset
 original_N=10
 signlevel=0.05
 
+#initial container for Wald, LM, LR
 W_count=rep(0,loop)
 LM_count=rep(0,loop)
 LR_count=rep(0,loop)
-
-#
+P.value_homo_count=rep(0,loop)
 # for loop start:Monte Carlo
-for(j in 1:loop){
+
+for(j in 1:loop){#first for-loop for generating multi-sample
 W=rep(0,loop)
 LM=rep(0,loop)
 LR=rep(0,loop)
 N=original_N+j
-for (i in 1:loop){
+
 #generation part:data
 x1=rchisq(N, 2)
 x2=runif(N,0,10)
@@ -206,53 +209,133 @@ equ1<-lm(y~x1+x2)
 equ2<-lm((y-x2)~(x1-x2))
 #calculation
 ##pre-cal:heteroscedasticity
-if (bptest(equ1)$p.value<signlevel){
-  equ1<-lm(y~x1+x2,weights=(1/x1^0.5))
-  equ2<-lm((y-x2)~(x1-x2),weights=(1/x1^0.5))
-}
+
+for (i in 1:loop){# second for-loop: the main Monte Carlo coding
 #calc SSR and Wald,LM, and LR
-SSRu=sum(residuals(equ1)^2)
-SSRr=sum(residuals(equ2)^2)
+residuals_eq1=sample(residuals(equ1),replace=1)
+residuals_eq2=sample(residuals(equ2),replace=1)
+SSRu=sum(residuals_eq1^2)
+SSRr=sum(residuals_eq2^2)
 
 W=N*((SSRr-SSRu)/(SSRu))
 LM=N*((SSRr-SSRu)/(SSRr))
 LR=N*(log(SSRr/SSRu))
 
 
+#if (bptest(equ1,studentize = 0)$p.value<signlevel){P.value_homo_count[j]=P.value_homo_count[j]+1}
+P.value_homo_count[j]=P.value_homo_count[j]+bptest(equ1,studentize = 0)$p.value
 
-if(ks.test(W,'pchisq',2)$p.value>signlevel){W_count[j]=W_count[j]+1}
-if(ks.test(LM,'pchisq',2)$p.value>signlevel){LM_count[j]=LM_count[j]+1}
-if(ks.test(LR,'pchisq',2)$p.value>signlevel){LR_count[j]=LR_count[j]+1}
+if(ks.test(W,'pchisq',1)$p.value>signlevel){W_count[j]=W_count[j]+1}
+if(ks.test(LM,'pchisq',1)$p.value>signlevel){LM_count[j]=LM_count[j]+1}
+if(ks.test(LR,'pchisq',1)$p.value>signlevel){LR_count[j]=LR_count[j]+1}
 }
 }
-
-plot(W_count/(original_N+1:(original_N+loop))^2)
-plot(LM_count/(original_N+1:(original_N+loop))^2)
-plot(LR_count/(original_N+1:(original_N+loop))^2)
+plot(P.value_homo_count/loop)
+plot(W_count/loop)
+plot(LM_count/loop)
+plot(LR_count/loop)
 
 ```
 
+From ```plot(W_count)```, we can find  when the size of sample increase, the W_count, which means the count of Wald following chisq, decrease. 
+
+Meanwhile, there exist the heteroscedacity issue to make the Wald and LM test invalid, Thus  
+before Wald test and LM test, the equation should the eliminate the heteroscedacity.
+ 
+here, to add
+
+```if (bptest(equ1,studentize = 0)$p.value<signlevel){
+  equ1<-gls(y~x1+x2,weights=1/(x1^0.5))
+  equ2<-gls((y-x2)~(x1-x2),weights=1/(x1^0.5))}```
+
+into the last code to eliminate the heteroscedacity.
+
+```{r Monte Carlo:heter-corrected}
+require(lmtest)
+require(MASS)
+require(stats)
+require(nlme)
+##boost up: translate programme language code into Byte-code.
+require(compiler)
+enableJIT(3)
+##boost up-end for continues
+#assumption part
+
+loop=100
+#Warning: the loop time cannot be larger any more;please forgive me, this all my Macbook fault. And the optimization of R is terrible.
+
+beta_1=0.4
+beta_0=1
+
+#x1_store=rchisq(80+20, 2)
+#initial valueset
+original_N=10
+signlevel=0.05
+
+#initial container for Wald, LM, LR
+W_count=rep(0,loop)
+LM_count=rep(0,loop)
+LR_count=rep(0,loop)
+P.value_homo_count=rep(0,loop)
+# for loop start:Monte Carlo
+
+for(j in 1:loop){#first for-loop for generating multi-sample
+W=rep(0,loop)
+LM=rep(0,loop)
+LR=rep(0,loop)
+N=original_N+j
+
+#generation part:data
+x1=rchisq(N, 2)
+x2=runif(N,0,10)
+epsilon=rt(N,6)
+y=beta_0+beta_1*x1+(1-beta_1)*x2+sqrt(x1)*epsilon
+#generation part:regression
+equ1<-lm(y~x1+x2)
+equ2<-lm((y-x2)~(x1-x2))
+if (bptest(equ1,studentize = 0)$p.value<signlevel){
+  
+lm(residuals(equ1)^2~x1+x2+x1*x2+(x1)^2+(x2)^2)
+bptest(residuals(equ2)^2~(x1-x2)+(x1-x2)^2) 
+  
+}
+  
+#calculation
+##pre-cal:heteroscedasticity
+
+for (i in 1:loop){# second for-loop: the main Monte Carlo coding
+#calc SSR and Wald,LM, and LR
+residuals_eq1=sample(residuals(equ1),replace=1)
+residuals_eq2=sample(residuals(equ2),replace=1)
+SSRu=sum(residuals_eq1^2)
+SSRr=sum(residuals_eq2^2)
+
+W=N*((SSRr-SSRu)/(SSRu))
+LM=N*((SSRr-SSRu)/(SSRr))
+LR=N*(log(SSRr/SSRu))
 
 
-if(ks.test(W,'pchisq',2)$p.value<signlevel){print ("Wald do not follow chi-squre distribution")}else print  ("Wald do follow chi-squre distribution")
-if(ks.test(LM,'pchisq',2)$p.value<signlevel){print ("LM do not follow chi-squre distribution")}else print  ("LM do follow chi-squre distribution")
-if(ks.test(LR,'pchisq',2)$p.value<signlevel){print ("LR do not follow chi-squre distribution")}else print  ("LR do follow chi-squre distribution")
+#if (bptest(equ1,studentize = 0)$p.value<signlevel){P.value_homo_count[j]=P.value_homo_count[j]+1}
+P.value_homo_count[j]=P.value_homo_count[j]+bptest(equ1,studentize = 0)$p.value
 
-W[i]=N*((SSRr-SSRu)/(SSRu))
-LM[i]=N*((SSRr-SSRu)/(SSRr))
-LR[i]=N*(log(SSRr/SSRu))
-
-
-
-
-
+if(ks.test(W,'pchisq',1)$p.value>signlevel){W_count[j]=W_count[j]+1}
+if(ks.test(LM,'pchisq',1)$p.value>signlevel){LM_count[j]=LM_count[j]+1}
+if(ks.test(LR,'pchisq',1)$p.value>signlevel){LR_count[j]=LR_count[j]+1}
+}
+}
+plot(P.value_homo_count/loop)
+plot(W_count/loop)
+plot(LM_count/loop)
+plot(LR_count/loop)
+```
 ## Question 4
 
 Compare the size of different test statistics (frequencies of making Type 1 error) from Monte Carlo using 5% level of significance for different sample sizes. Explain the results.
-```{r}
-plot(W_count/(original_N+1:(original_N+loop))^2)
-plot(LM_count/(original_N+1:(original_N+loop))^2)
-plot(LR_count/(original_N+1:(original_N+loop))^2)
+```{r l}
+
+plot(W_count/loop)
+plot(LM_count/loop)
+plot(LR_count/loop)
 ```
 
 
@@ -292,7 +375,7 @@ enableJIT(3)
 ##boost up-end for continues
 #assumption part
 
-loop=50
+loop=100
 #Warning: the loop time cannot be larger any more;please forgive me, this all my Macbook fault. And the optimization of R is terrible.
 
 
@@ -305,34 +388,35 @@ theta_count=rep(0,loop)
 
 #
 # for loop start:Monte Carlo
-for(j in 1:loop){
+for(j in 1:loop){#first for-loop for generating multi-sample
 theta=rep(0,loop)
 N=original_N+j
-for (i in 1:loop){
 #generation part:data
+
+
+
+for (i in 1:loop){
 s=sample(1:length(pbp$y),N,replace = 1)
 question5.y<-pbp$y[s]
 question5.x1<-pbp$x1[s]
 question5.x2<-pbp$x2[s]
 ee=rnorm(N,mean=0,sd=sqrt(var(question5.y)))
-#epsilon=ee/sqrt(x1)
-#y=beta_0+beta_1*x1+(1-beta_1)*x2+sqrt(x1)*epsilon
 #generation part:regression
 question5.equ1<-lm(question5.y~question5.x1+question5.x2)
 #question5.equ2<-lm((question5.y-question5.x2)~(question5.x1-question5.x2))
 #calculation
 ##pre-cal:heteroscedasticity
-if (bptest(question5.equ1)$p.value<signlevel){
-  question5.equ1<-lm(question5.y~question5.x1+question5.x2,weights=(1/question5.x1^2))
+if(bptest(question5.equ1)$p.value<signlevel){
+  question5.equ1<-lm(question5.y~question5.x1+question5.x2,weights=(1/question5.x1^0.5))
   #question5.equ2<-lm((question5.y-question5.x2)~(question5.x1-question5.x2),weights=(1/question5.x1^0.5))
-}
+  }
 #calc 
 
 theta[i]=question5.equ1$coefficients[2]+question5.equ1$coefficients[3]
-
-}
-if(t.test(theta,rep(1,loop))$p.value<signlevel){theta_count[j]=theta_count[j]+1}
+if(t.test(theta,mu=1)$p.value<signlevel){theta_count[j]=theta_count[j]+1}
 }
 
-plot(theta_count/(N+1:(N+loop)^2))
+}
+
+plot(theta_count/loop)
 ```
