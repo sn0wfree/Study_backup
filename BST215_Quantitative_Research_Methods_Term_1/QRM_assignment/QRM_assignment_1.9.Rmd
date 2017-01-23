@@ -486,6 +486,14 @@ t.test(Midwest.SR.bootstrap,South.SR.bootstrap)
 #sink()
 hist(West.SR.bootstrap)
 
+
+
+
+
+
+
+
+
 #count of project
 Northeast.CP.bootstrap=bootstrapfunctiontest(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"],1000)
 West.CP.bootstrap=bootstrapfunctiontest(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],1000)
@@ -504,7 +512,12 @@ t.test(Midwest.CP.bootstrap,South.CP.bootstrap)
 
 ### Geography information-wilcox.test
 ```{r Geography information-wilcox.test}
-#wilcox.test(crowdfunding$successful_rate[crowdfunding$Region=="West"],crowdfunding$successful_rate[crowdfunding$Region=="Northeast"])
+wilcox.test(crowdfunding$successful_rate[crowdfunding$Region=="West"],crowdfunding$successful_rate[crowdfunding$Region=="Northeast"])
+wilcox.test(crowdfunding$successful_rate[crowdfunding$Region=="Midwest"],crowdfunding$successful_rate[crowdfunding$Region=="Northeast"])
+wilcox.test(crowdfunding$successful_rate[crowdfunding$Region=="South"],crowdfunding$successful_rate[crowdfunding$Region=="Northeast"])
+wilcox.test(crowdfunding$successful_rate[crowdfunding$Region=="West"],crowdfunding$successful_rate[crowdfunding$Region=="Midwest"])
+
+
 #wilcox.test(crowdfunding$count_of_Grand.Total[crowdfunding$Region=="West"],crowdfunding$count_of_Grand.Total[crowdfunding$Region=="Northeast"])
 
 
@@ -703,7 +716,7 @@ plot(crowdfunding$successful_rate~crowdfunding$pAdDeg)
 points(lowess(crowdfunding$successful_rate~crowdfunding$pAdDeg),type="l")
 ```
 
-```{r}
+```{r testfornothing}
 b=NA
 for (i in 150:170){
 a<-sctest(log(crowdfunding$successful_rate)~log(crowdfunding$pAdDeg),type="Chow",point=i/1000)
