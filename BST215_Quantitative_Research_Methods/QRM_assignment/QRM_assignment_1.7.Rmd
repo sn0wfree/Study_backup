@@ -1,0 +1,195 @@
+---
+title:  assignment 
+author:  sn0wfree 
+date:  11/16/2016 
+output: 
+  pdf_document: 
+    fig_caption: yes
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+---
+
+
+
+
+
+
+
+
+
+```{r import_data}
+#assig<-read.csv( "States facts.csv" ,header=TRUE)
+all<-read.csv( "all.csv" ,header=1)
+
+head(all)
+variables_name<-variable.names(all)
+colnames(all)
+rownames(all)<-all$state
+str(all)
+newall<-all
+all$state<-NULL
+``` 
+
+
+```{r murd}
+murd<-read.csv("murd.csv",header=1)
+str(murd)
+rownames(murd)<-murd$state
+murd$State<-NULL
+boxplot(murd$murd.pop2010[murd$Region=="Midwest"],murd$murd.pop2010[murd$Region=="Northeast"],murd$murd.pop2010[murd$Region=="South"],murd$murd.pop2010[murd$Region=="West"],names=c("Murd Rate in Midwest","Murd Rate in Northeast","Murd Rate in South","Murd Rate in West"))
+
+murdwithout<-murd
+rownames(murdwithout)<-rownames(murd)
+murdwithout$Region<-NULL
+
+hc_murd<-hclust(dist(murdwithout),method = "ward.D", members = NULL)
+plclust(hc_murd)
+rect.hclust(hc_murd,k=5)
+
+a<-lm(murd$Murd~murd$pHigh)
+b<-lm(murd$GunOwnPC~murd$pHigh)
+c<-lm(murd$GunOwnPC~murd$GiniCoeff)
+d<-lm(murd$Murd~murd$GunOwnPC)
+
+summary(c)
+summary(a)
+summary(b)
+summary(d)
+library(car)
+scatterplot(murd$GunOwnPC,murd$GiniCoeff)
+scatterplot(murd$GunOwnPC,murd$pHigh)
+scatterplot(murd$murd,murd$GunOwnPC)
+library(lmtest)
+grangertest(murd$GunOwnPC~murd$GiniCoeff)
+
+
+rownames(murdwithout)<-rownames(murd)
+mds_murd <- -cmdscale(dist(murdwithout))
+plot(mds_murd, type="n", axes=FALSE, ann=FALSE)
+text(mds_murd, labels=rownames(mds_murd), xpd = NA)
+
+t.test(murd$Murd,murd$GunMurd)
+
+
+cor.test(murd$GiniCoeff,murd$GunOwnPC)
+```
+
+
+
+
+
+```{r}
+boxplot(log(all$murd[all$gunownpc > 0.5]),log(all$murd[all$gunownpc <= 0.5]),names=c("higher than .5","lower than 5"))
+
+
+
+```
+
+
+```{r internetuse}
+#inte
+plot(all$intuse2010)
+boxplot(log(all$intuse2010),log(all$npov000s))
+qqplot(log(all$intuse2010),log(all$npov000s))
+qqnorm(log(all$intuse2010))
+hist(log(all$intuse2010))
+hist(log(all$npov000s))
+wilcox.test(all$intuse2010,all$npov000s)
+cor.test(all$intuse2010,all$npov000s)
+cor.test(all$intuse2010,all$npov000s,method="spearman")
+cor.test(all$intuse2010,all$npov000s,method="kendall")
+
+plot(all$intuse2010,all$npov000s,pch=19,col="red",cex=1)
+points(lowess(all$intuse2010,all$npov000s),pch=19,col="blue",cex=1)
+
+
+
+
+```
+
+
+
+
+union:1) pcunion 2) nunion 3)workpop
+
+overweight: obsesad; overwead;obesech
+
+edcution:phigh;pbatdeg;paddeg
+
+
+crime:Ninjail;njaiper100k;murd;gunmurd;gunownpc;murd.pop2010
+
+
+co2: emitco2;emitraet
+
+```{r}
+principal components analysis
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+```{r k-mean-1}
+
+hc<-hclust(dist(all),method = "ward.D", members = NULL)
+plclust(hc)
+rect.hclust(hc,k=5) 
+
+mds2 <- -cmdscale(dist(all))
+plot(mds2, type="n", axes=FALSE, ann=FALSE)
+text(mds2, labels=rownames(mds2), xpd = NA)
+
+
+heatmap(as.matrix(dist(all,method= 'euclidean')),labRow = F, labCol = F)
+result<-cutree(hc,k=5)
+as.data.frame(result)
+pie(result)
+table(result)
+summary(result)
+plot(result,type = "p")
+write.csv(result,file="kmeanresult.csv")
+
+```
+
+
+
+
+
+
+```{r k-mean-2}
+mds<-cmdscale(dist(all),k=3,eig=T)
+
+
+x = mds$points[,1]
+y = mds$points[,2]
+library(ggplot2)
+p=ggplot(data.frame(x,y),aes(x,y))
+p+geom_point(size=5 , alpha=0.8 , aes(colour=factor(result) ))
+k2<-kmeans(all,centers=5,nstart=10)
+summary(k2)
+```
+
+
+```{r try}
+data(UScitiesD)
+str(UScitiesD)
+mds2 <- -cmdscale(UScitiesD)
+plot(mds2, type="n", axes=FALSE, ann=FALSE)
+text(mds2, labels=rownames(mds2), xpd = NA)
+hcity.D2 <- hclust(UScitiesD, "ward.D2")
+opar <- par(mfrow = c(1, 2))
+#plot(hcity.D,  hang=-1)
+plot(hcity.D2, hang=-1)
+par(opar)
+```
+

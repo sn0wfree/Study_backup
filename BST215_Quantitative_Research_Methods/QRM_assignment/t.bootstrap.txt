@@ -1,0 +1,72 @@
+
+	Welch Two Sample t-test
+
+data:  Northeast.SR.bootstrap and West.SR.bootstrap
+t = 77.763, df = 1863.4, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.09158924 0.09632865
+sample estimates:
+mean of x mean of y 
+0.4329781 0.3390191 
+
+
+	Welch Two Sample t-test
+
+data:  Northeast.SR.bootstrap and South.SR.bootstrap
+t = 67.41, df = 1407, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.06938473 0.07354399
+sample estimates:
+mean of x mean of y 
+0.4329781 0.3615137 
+
+
+	Welch Two Sample t-test
+
+data:  Northeast.SR.bootstrap and Midwest.SR.bootstrap
+t = 72.31, df = 1978.2, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ 0.09128465 0.09637424
+sample estimates:
+mean of x mean of y 
+0.4329781 0.3391486 
+
+
+	Welch Two Sample t-test
+
+data:  West.SR.bootstrap and Midwest.SR.bootstrap
+t = -0.11396, df = 1939.7, p-value = 0.9093
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.002358155  0.002099160
+sample estimates:
+mean of x mean of y 
+0.3390191 0.3391486 
+
+
+	Welch Two Sample t-test
+
+data:  West.SR.bootstrap and South.SR.bootstrap
+t = -26.301, df = 1649.9, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.02417214 -0.02081703
+sample estimates:
+mean of x mean of y 
+0.3390191 0.3615137 
+
+
+	Welch Two Sample t-test
+
+data:  Midwest.SR.bootstrap and South.SR.bootstrap
+t = -22.882, df = 1487.3, p-value < 2.2e-16
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.02428236 -0.02044782
+sample estimates:
+mean of x mean of y 
+0.3391486 0.3615137 
+

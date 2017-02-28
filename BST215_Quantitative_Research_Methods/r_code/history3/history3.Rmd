@@ -1,0 +1,47 @@
+---
+title: 'Quantitative Research Methods: history 3'
+author: "sn0wfree"
+date: "11/12/2016"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    number_sections: yes
+    toc: yes
+---
+#history 3 for QRM
+
+##import data and attach
+
+
+use Demographics.xls
+
+```{r import data and attach}
+#somA=read.table("clipboard",header=TRUE)
+somA=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Demographics.csv",header=TRUE)
+#head(soma) # WRONG. Capital A.
+head(somA)
+attach(somA)
+```
+
+##plot 
++ boxplot and qqnorm for IQ &educ
+```{r plot box&qqnorm for IQ &educ}
+boxplot(IQ)
+qqnorm(IQ)
+boxplot(educ)
+qqnorm(educ)
+
+plot(IQ,educ)
+plot(IQ,jitter(educ))
+plot(lowess(IQ,educ))
+plot(lowess(IQ,educ,f=1/3)) # for a more fine-grained smooth
+```
+
+
+##cor.test
+```{r cor.test}
+cor.test(IQ,educ)
+```
+
+

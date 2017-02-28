@@ -1,0 +1,24 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+crowdfunding<-read.csv( "forqrm3.csv" ,header=1)
+head(crowdfunding)
+
+rownames(crowdfunding)<-crowdfunding$State
+crowdfunding$State<-NULL
+nomissing<-na.omit(crowdfunding)
+final<-nomissing[ ,-ncol(nomissing)]
+#final$pAdDeg_dummy=NULL
+library(psych)
+library(GPArotation)
+
+```
+
+```{r}
+
+parallel=fa.parallel(final,fm="ml")
+
+```

@@ -1,0 +1,66 @@
+---
+title: "trials"
+author: "sn0wfree"
+date: "11/17/2016"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    latex_engine: lualatex
+    number_sections: yes
+    toc: yes
+---
+
+
+# trial for the assisgnment
+
+Note:All data are from USA government
+
+```{r importdata}
+all<-read.csv("all.csv",header=1)
+head(all)
+```
+
+```{r analysis}
+boxplot(all$collectivism)
+boxplot(all$lnfirmspercapita)
+qqnorm(all$collectivism)
+qqplot(all$collectivism,all$lnfirmspercapita)
+hist(all$lnfirmspercapita)
+wilcox.test(all$collectivism,all$lnfirmspercapita)
+barplot(all$collectivism)
+#pairs(all)
+cor.test(all$lnfirmspercapita,all$collectivism)
+cor.test(all$lnfirmspercapita,all$collectivism,method="spearman")
+cor.test(all$lnfirmspercapita,all$collectivism,method="kendall")
+plot(all$lnfirmspercapita,all$collectivism,pch=19,cex=2,col="red")
+points(lowess(all$lnfirmspercapita,all$collectivism),pch=15,cex=2,col="blue")
+```
+```{r regression}
+reglmcollectivism<-lm(all$collectivism~all$lnfirmspercapita)
+summary(reglmcollectivism)
+head(resid(reglmcollectivism))
+head(reglmcollectivism$residuals)
+boxplot(reglmcollectivism$residuals)
+qqnorm(reglmcollectivism$residuals,pch=7,col="blue")
+plot(all$collectivism,reglmcollectivism$residuals,pch=17,col="blue")
+```
+
+```{r createamultidataset}
+lm2<-lm(all$collectivism~all$pcunion)
+summary(lm2)
+scatter.smooth(all$collectivism,all$pcunion)
+plot(all$collectivism,all$pcunion,pch=12,col="green")
+points(lowess(all$collectivism,all$pcunion),f=3/4,pch=15,col="red")
+cor.test(all$collectivism,all$pcunion)
+#m12m2<-lm(reglmcollectivism$residuals~all$pcunion)
+#summary(m12m2)
+boxplot(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+barplot(table(all$pcunion[all$right2work==1]))
+barplot(table(all$pcunion[all$right2work==0]))
+t.test(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+wilcox.test(all$pcunion[all$right2work==1],all$pcunion[all$right2work==0])
+boxplot(all$collectivism[all$right2work==1],all$collectivism[all$right2work==0])
+wilcox.test(all$collectivism[all$right2work==1],all$collectivism[all$right2work==0])
+```
+

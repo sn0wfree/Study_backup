@@ -1,0 +1,120 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r r2}
+#import data
+shs<-read.table(pipe("pbpaste"),header = 1)
+attach(shs)
+m0=lm(T2W~1)
+m1=lm(T2W~log(PopDens))
+m1x=lm(T2W~log(PopDens)+Ed1)
+m1y=lm(T2W~Ed2+Ed1)
+m2=lm(T2W~log(PopDens)+Ed1+Ed2)
+
+
+```
+
+```{r dummy variable}
+#import data
+
+m3=lm(yy$Wage~yy$Gender+yy$Age+as.factor(yy$occupation))
+
+
+
+```
+
+`OccTXT=relevel(yy$OccTXT,ref="LAB_Assistant")`
+```{r}
+data=read.table(pipe("pbpaste"),header=1)
+#str(data)
+head(data)
+m0=lm(data$Wage~1)
+m1=lm(data$Wage~data$Age)
+m2=lm(data$Wage~data$Age+data$TWC)
+m3=lm(data$Wage~data$Age+data$TWC+data$Gender)
+m4=lm(data$Wage~data$Age+data$TWC+data$Gender+data$OccTXT)
+
+anova(m0,m1,m2,m3,m4)
+```
+
+```{r}
+dd=read.table(pipe("pbpaste"),header=1)
+head(dd)
+
+mcount0=lm(dd$T2W~1)
+mcount1=lm(dd$T2W~log(dd$PopDens+1))
+mcount2=lm(dd$T2W~log(dd$PopDens+1)+dd$Ed1)
+mcount3=lm(dd$T2W~log(dd$PopDens+1)+dd$Ed1+dd$Ed2)
+
+
+anova(mcount0,mcount1,mcount2,mcount3)
+summary(mcount0)
+summary(mcount1)
+summary(mcount2)
+summary(mcount3)
+
+
+hc<-hclust(dist(dd)^2,method = "cen", members = NULL) 
+plot(hc)
+mds2 <-cmdscale(dist(dd)^2)
+plot(mds2, type="n", axes=FALSE, ann=FALSE)
+text(mds2, labels=rownames(mds2), xpd = NA)
+```
+
+```{r}
+shs<-read.table(pipe("pbpaste"),header = 1)
+
+m0=lm(shs$Wage~1)
+m1=lm(shs$Wage~shs$Gender)
+m2=lm(shs$Wage~shs$Gender+shs$TWC)
+m3=lm(shs$Wage~shs$Gender*shs$TWC)
+m3A=lm(shs$Wage~shs$Gender+shs$TWC + shs$TWC*shs$Gender)
+anova(m0,m1,m2,m3)
+
+table(shs$Occupation,shs$Gender)
+
+shs16=shs[shs$Occupation==16,]
+head(shs16)
+str(shs16)
+m0_16=lm(shs16$Wage~1)
+m1_16=lm(shs16$Wage~shs16$Gender)
+m2_16=lm(shs16$Wage~shs16$Gender+shs16$TWC)
+m3_16=lm(shs16$Wage~shs16$Gender*shs16$TWC)
+m3A_16=lm(shs16$Wage~shs16$Gender+shs16$TWC + shs16$TWC*shs16$Gender)
+anova(m0_16,m1_16,m2_16,m3_16)
+summary(m3_16)
+plot(m3_16)
+#Male(Gender =0): Wage =
+par(mfrow=c(2,1))
+plot(shs16$TWC[shs16$Gender==1],shs16$Wage[shs16$Gender==1])
+plot(shs16$TWC[shs16$Gender==0],shs16$Wage[shs16$Gender==0])
+
+shs9=shs[shs$Occupation==16,]
+head(shs9)
+str(shs9)
+m0_9=lm(shs9$Wage~1)
+m1_9=lm(shs9$Wage~shs9$Gender)
+m2_9=lm(shs9$Wage~shs9$Gender+shs9$Age)
+m3_9=lm(shs9$Wage~shs9$Gender*shs9$Age)
+m3A_9=lm(shs9$Wage~shs9$Gender+shs9$Age + shs9$Age*shs9$Gender)
+anova(m0_9,m1_9,m2_9,m3_9)
+summary(m3_9)
+plot(m3_9)
+#Male(Gender =0): Wage =
+#par(mfrow=c(2,1))
+plot(shs9$Age[shs9$Gender==1],shs9$Wage[shs9$Gender==1])
+plot(shs9$Age[shs9$Gender==0],shs9$Wage[shs9$Gender==0])
+
+# mean centering
+MCage=shs9$Age-mean(shs9$Age)
+m0_9MC=lm(shs9$Wage~1)
+m1_9MC=lm(shs9$Wage~shs9$Gender)
+m2_9MC=lm(shs9$Wage~shs9$Gender+MCage)
+m3_9MC=lm(shs9$Wage~shs9$Gender*MCage)
+anova(m0_9MC,m1_9MC,m2_9MC,m3_9MC)
+summary(m3_9MC)
+
+```
+

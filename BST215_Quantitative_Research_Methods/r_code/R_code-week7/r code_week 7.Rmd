@@ -1,0 +1,143 @@
+---
+title: 'Quantitative Research Methods: R_code_week 7'
+author: "sn0wfree"
+date: "11/10/2016"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    latex_engine: xelatex
+    toc: yes
+---
+#Quantitative Research Methods:R_Code_week 7
+
+*coding=UTF8*
+
+##Import the data
+
+```{r import_data, highlight=TRUE,echo=TRUE}
+#*coding==UTF8*
+#dataset=attendSLIM.xls
+#attendSLIM=read.table(pipe("pbpaste"),header=TRUE)
+attendSLIM=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/R_code-week7/attendSLIM.csv",header=TRUE)
+head(attendSLIM)
+#attach(attend)
+#par(mfrow=c(4,4)) #outframe set to 4*4 
+```
+
+```{r boxplot}
+boxplot(attendSLIM$attendPC,attendSLIM$hwPC)
+```
+
+##t-test and the related tests
+
+t-test use to test the small sample(n<30), it is a method to test the different of the mean between two small sampl-size data.
+it use the T-dsitribution to estimate/predict the probability of difference among two samples, and evaluate the whether exist the significant difference between two mean.
+
+
+###two-tail test
+```{r t.test-two_tails.test}
+t.test(attendSLIM$attendPC, attendSLIM$hwPC) #normal t-test 
+t.test(attendSLIM$attendPC, attendSLIM$hwPC, var.equal = TRUE) #t-test with var as equal # deprecated
+t.test(attendSLIM$attendPC,attendSLIM$hwPC, paired = TRUE)#pair two sample to test whether the means are equal
+```
+###one-tail test
+mu show the true mean
+```{r t.test-one_tail.test}
+t.test(attendSLIM$attendPC) #test mu =0:mu show the ture mean in this one sample t-test
+t.test(attendSLIM$attendPC, mu =85) #test mu=85:mu show the ture mean in this one sample t-test
+t.test(attendSLIM$attendPC-85) # equivalent of t.test(attendSLIM$attendPC, mu =85) 
+
+t.test(attendSLIM$attendPC, mu =85, alternative = "less")# one tail test
+t.test(attendSLIM$attendPC, mu =82.99312)
+t.test(attendSLIM$attendPC, mu =81.70956)
+```
+
+
+##Redo with another test: wilcox.test
+the different of t-test and Wilcox.test-->[t-test and wilcox.test](http://www.zilhua.com/1118.html)<--Warning: this chinese website
+the data samples are independent if they come from distinct populations and the samples do not affect each other. 
+Using the Mann-Whitney-Wilcoxon Test, we can decide whether the population distributions are identical without assuming them to follow the normal distribution.
+
+```{r wilcox.test}
+wilcox.test(attendSLIM$attendPC,attendSLIM$hwPC, paired = 1) #1 means TRUE here
+wilcox.test(attendSLIM$attendPC, mu =85)
+```
+
+###plot and show the chisq.test 
+```{r plot_graph}
+hist(table(attendSLIM$final))
+hist((attendSLIM$final))#?
+table(attendSLIM$final>=25)
+table(attendSLIM$final>=25,attendSLIM$year)
+chisq.test(table(attendSLIM$final>=25,attendSLIM$year))
+```
+###example tables and data for rank
+
+####table original
+
+original|blue|black|black blue |sum
+-------|-----|-----|----------|----
+M      | 20 | 30 | 70 | 120
+F      | 10 | 30 | 50 | 90
+-------|-----|-----|----------|-----
+sum    | 30   |60   |120       |210
+				
+
+####table expected
+Expected|blue|black|black blue |sum
+-------|-----|-----|----------|----
+M      |17.14285714|34.28571429|68.57142857|120
+F      |12.85714286|25.71428571|51.42857143|90
+-------|-----|-----|----------|-----
+sum    |   30|  60 |120       |210
+
+				
+use $chi^2$ => ($\sum (o-e)^2$) to test different			
+degree of freedom:(row-1)(column-1)		
+
+and Hypothesis:
+h1: pass rate different between year and 
+h0: pass rate same between year and 
+
+
+##(simple) linear Regression model
+lm for linear model
+1st: the simple regression on final to act
+
+For exmaple
+$final=a+b*ACT$
+hypothesis: 
+H0: ACT can not predict the final:$b=0$
+H1: ACT can predict the final:$b!=0$
+
+```{r simple_regression}
+m1<-lm(attendSLIM$final~attendSLIM$ACT)
+summary(m1)
+```
+
+
+
+
+## Correlation test
+```{r cor.test}
+cor.test(attendSLIM$final,attendSLIM$ACT)
+```
+
+
+## Draw the graph: residuals
+```{r Image_simple_regression, include=FALSE}
+boxplot(m1$residuals)
+hist(m1$residuals)
+qqnorm(m1$residuals)
+```
+
+
+
+
+
+
+
+
+
+

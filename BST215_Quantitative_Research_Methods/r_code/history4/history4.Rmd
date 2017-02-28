@@ -1,0 +1,75 @@
+---
+title: 'Quantitative Research Methods: history 4'
+author: "sn0wfree"
+date: "11/12/2016"
+output:
+  html_document:
+    toc: yes
+  pdf_document:
+    latex_engine: xelatex
+    number_sections: yes
+    toc: yes
+---
+#history 4 for QRM
++ history 4 27 October 2016... Folowing on from hypothesis testing
++ use Wages.xls
+##import data and attach
+```{r import data and attach}
+#xx=read.table("clipboard",header=TRUE)
+xx=read.csv("/Users/sn0wfree/Dropbox/PhD_1st_study/BST215_Quantitative_Research_Methods_Term_1/r_code/Wages.csv",header=TRUE)
+head(xx)
+attach(xx)
+```
+
+## wilcox.test-1
+compare the different on Wage|Gender:
+and use one tail or two tail test
+```{r wilcox.test-1:Wage|Gender}
+wilcox.test(Wage[Gender=="Male"],Wage[Gender=="Female"])
+wilcox.test(Wage[Gender=="Male"],Wage[Gender=="Female"],alternative="greater")
+wilcox.test(Wage[Gender=="Male"],Wage[Gender=="Female"],alternative="less")
+```
+
+##exploratory plot
+```{r exploratory plot}
+
+plot(Experience,Wage)
+plot(lowess(Experience,Wage))
+
+```
+
+##cor.test-1:Age,Experience-Wage
+```{r cor.test-1:Age,Experience-Wage}
+cor.test(Age,Wage)
+cor.test(Experience,Wage)
+cor.test(Experience,Wage,alternative="greater")
+```
+
+##show information on Experience|Gende
+
+```{r info.Experience|Gender}
+y=Experience[Gender=="Male"]
+x=Experience[Gender=="Female"]
+mean(x)
+mean(y)
+table(Experience)
+hist(Experience)
+table(Experience,Gender)
+```
+
+
+
+## wilcox.test-2:Experience|Gender
+```{r wilcox.test-2:Experience|Gender}
+y=Experience[Gender=="Male"]
+x=Experience[Gender=="Female"]
+wilcox.test(x,y)
+wilcox.test(y,x,alternative="greater")
+wilcox.test(y[Experience==10],x[Experience==10])
+wilcox.test(Wage[Gender=="Female" & Experience==10],Wage[Gender=="Male" & Experience==10])
+wilcox.test(Wage[Gender=="Female" & Experience==13],Wage[Gender=="Male" & Experience==13])
+wilcox.test(Wage[Gender=="Female" & Experience==14],Wage[Gender=="Male" & Experience==14])
+```
+
+
+
